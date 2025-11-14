@@ -46,6 +46,9 @@ gem "image_processing", "~> 1.12"
 # Track changes to models with PaperTrail [https://github.com/paper-trail-gem/paper_trail]
 gem "paper_trail", "~> 15.0"
 
+# Markdown editor for admin interfaces [https://github.com/basecamp/lexxy]
+gem "lexxy", "~> 0.1"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri windows], require: "debug/prelude"

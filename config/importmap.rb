@@ -13,6 +13,7 @@ pin "@rails/actiontext", to: "actiontext.esm.js"
 pin "@rails/actioncable", to: "actioncable.esm.js"
 pin "@rails/activestorage", to: "activestorage.esm.js"
 pin "trix"
+pin "lexxy", to: "lexxy.js"
 
 # Vendor libraries
 pin "@hotwired/hotwire-native-bridge", to: "@hotwired--hotwire-native-bridge.js" # @1.2.2

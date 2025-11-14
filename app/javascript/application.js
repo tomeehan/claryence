@@ -2,6 +2,7 @@
 import "@hotwired/turbo-rails"
 import "trix"
 import "@rails/actiontext"
+import "lexxy"
 import "channels"
 import "controllers"
 import "src"
