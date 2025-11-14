@@ -4,8 +4,10 @@
 %>
 
 <% if use_lexxy %>
-  <lexxy-editor>
-    <%= form.text_area field.attribute_name, rows: 15, class: "form-input" %>
+  <lexxy-editor
+    name="<%= form.object_name %>[<%= field.attribute_name %>]"
+    value="<%= form.object.send(field.attribute_name) %>"
+    placeholder="Enter <%= field.attribute_name.to_s.humanize.downcase %>...">
   </lexxy-editor>
 <% else %>
   <%= form.text_area field.attribute_name, class: "form-input" %>
