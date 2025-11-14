@@ -1,0 +1,14 @@
+<%
+  # Use Lexxy markdown editor for specific fields, otherwise use regular text area
+  use_lexxy = ['description', 'llm_instructions', 'recommended_for'].include?(field.attribute_name.to_s)
+%>
+
+<% if use_lexxy %>
+  <%= form.label field.attribute_name %>
+  <lexxy-editor>
+    <%= form.text_area field.attribute_name, rows: 10, class: "form-control" %>
+  </lexxy-editor>
+<% else %>
+  <%= form.label field.attribute_name %>
+  <%= form.text_area field.attribute_name, rows: 10, class: "form-control" %>
+<% end %>
