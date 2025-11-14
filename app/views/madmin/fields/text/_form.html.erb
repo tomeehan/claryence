@@ -4,11 +4,9 @@
 %>
 
 <% if use_lexxy %>
-  <%= form.label field.attribute_name %>
   <lexxy-editor>
-    <%= form.text_area field.attribute_name, rows: 10, class: "form-control" %>
+    <%= form.text_area field.attribute_name, rows: 15, class: "form-input" %>
   </lexxy-editor>
 <% else %>
-  <%= form.label field.attribute_name %>
-  <%= form.text_area field.attribute_name, rows: 10, class: "form-control" %>
+  <%= form.text_area field.attribute_name, class: "form-input" %>
 <% end %>
