@@ -44,3 +44,4 @@
 @import "./components/typography.css" layer(components);
 @import "./components/wells.css" layer(components);
 @import "./components/braintree.css" layer(components);
+@import "./components/madmin.css" layer(components);

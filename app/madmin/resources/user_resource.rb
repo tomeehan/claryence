@@ -16,7 +16,7 @@ class UserResource < Madmin::Resource
   attribute :accepted_terms_at, form: false
   attribute :accepted_privacy_at, form: false
   attribute :otp_required_for_login, form: false
-  attribute :avatar, index: false
+  # attribute :avatar, index: false
   attribute :admin, form: false
   attribute :created_at, form: false
   attribute :updated_at, form: false
@@ -27,7 +27,7 @@ class UserResource < Madmin::Resource
   attribute :accounts, form: false
   attribute :owned_accounts, form: false
   attribute :personal_account, form: false
-  attribute :connected_accounts, form: false
+  # attribute :connected_accounts, form: false
 
   # Uncomment this to customize the display name of records in the admin area.
   def self.display_name(record)

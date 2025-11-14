@@ -8,18 +8,18 @@ class AccountResource < Madmin::Resource
   attribute :personal
   attribute :created_at, form: false
   attribute :updated_at, form: false
-  attribute :extra_billing_info
+  # attribute :extra_billing_info
   attribute :domain
-  attribute :subdomain
-  attribute :billing_email
+  # attribute :subdomain
+  # attribute :billing_email
   attribute :account_users_count, form: false
-  attribute :avatar, index: false
+  # attribute :avatar, index: false
 
   # Associations
-  attribute :pay_customers, form: false
-  attribute :pay_charges, form: false
-  attribute :pay_subscriptions, form: false
-  attribute :payment_processor, form: false
+  # attribute :pay_customers, form: false
+  # attribute :pay_charges, form: false
+  # attribute :pay_subscriptions, form: false
+  # attribute :payment_processor, form: false
   attribute :account_invitations, form: false
   attribute :account_users, form: false
   attribute :users, form: false

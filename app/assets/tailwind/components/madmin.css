@@ -1,0 +1,8 @@
+/* Madmin customizations */
+
+/* Hide the Madmin on GitHub footer link */
+aside#sidebar footer,
+.madmin footer,
+footer.madmin-footer {
+  display: none !important;
+}
