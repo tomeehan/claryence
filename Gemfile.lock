@@ -193,7 +193,7 @@ GEM
     jbuilder (2.14.1)
       actionview (>= 7.0.0)
       activesupport (>= 7.0.0)
-    json (2.15.2)
+    json (2.16.0)
     kamal (2.8.2)
       activesupport (>= 7.0)
       base64 (~> 0.2)
@@ -277,7 +277,7 @@ GEM
       rails (>= 6.1.0)
     orm_adapter (0.5.0)
     ostruct (0.6.3)
-    pagy (43.0.0)
+    pagy (43.0.5)
       json
       yaml
     paper_trail (15.2.0)
@@ -568,7 +568,7 @@ DEPENDENCIES
   name_of_person (~> 1.0)
   nokogiri (>= 1.12.5)
   noticed (~> 2.2)
-  pagy (~> 43.0.0.rc2)
+  pagy (~> 43.0.5)
   paper_trail (~> 15.0)
   pay (~> 11.0)
   pg
@@ -663,7 +663,7 @@ CHECKSUMS
   io-console (0.8.1) sha256=1e15440a6b2f67b6ea496df7c474ed62c860ad11237f29b3bd187f054b925fcb
   irb (1.15.3) sha256=4349edff1efa7ff7bfd34cb9df74a133a588ba88c2718098b3b4468b81184aaa
   jbuilder (2.14.1) sha256=4eb26376ff60ef100cb4fd6fd7533cd271f9998327e86adf20fd8c0e69fabb42
-  json (2.15.2) sha256=1068e1d966d2d0dcaf953eaed09c2d30e4104c64c1e3140c435d17be08d1fa27
+  json (2.16.0) sha256=ca5630320bb5ca23ebfd0bac84532fab56eb357575653b815b9df42c051e1525
   jumpstart (0.1.0)
   kamal (2.8.2) sha256=5193d7a6be85c8eb7b0a27aa43ab49128f1500e9a818a730c5eb66d809a842c8
   language_server-protocol (3.17.0.5) sha256=fd1e39a51a28bf3eec959379985a72e296e9f9acfce46f6a79d31ca8760803cc
@@ -703,7 +703,7 @@ CHECKSUMS
   noticed (2.9.3) sha256=9809d1100edc3ee208fbd88f4fe025a13e3b02e68c865bf705d197239ebcf3db
   orm_adapter (0.5.0) sha256=aa5d0be5d540cbb46d3a93e88061f4ece6a25f6e97d6a47122beb84fe595e9b9
   ostruct (0.6.3) sha256=95a2ed4a4bd1d190784e666b47b2d3f078e4a9efda2fccf18f84ddc6538ed912
-  pagy (43.0.0) sha256=c052a89dd8b8eeb09dd25604b91557fd94e174dd77aec35ffb015ca9c6f068fd
+  pagy (43.0.5) sha256=a49da117c71d8fab2fe0b9b5e8773dd0907e14adac10f61a96254c9ce9c1a15d
   paper_trail (15.2.0) sha256=4be0925e3e881d6b0397294bcffe748a6f2d654fc9e59220a05f7ef4d33ea4a5
   parallel (1.27.0) sha256=4ac151e1806b755fb4e2dc2332cbf0e54f2e24ba821ff2d3dcf86bf6dc4ae130
   parser (3.3.10.0) sha256=ce3587fa5cc55a88c4ba5b2b37621b3329aadf5728f9eafa36bbd121462aabd6
