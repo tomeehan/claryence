@@ -11,10 +11,10 @@ class RolePlayResource < Madmin::Resource
   # Attributes
   attribute :id, form: false
   attribute :name
-  attribute :description, :text, index: false
-  attribute :llm_instructions, :text, index: false
+  attribute :description, :rich_text, index: false
+  attribute :llm_instructions, :rich_text, index: false
   attribute :duration_minutes
-  attribute :recommended_for, :text, index: false
+  attribute :recommended_for, :rich_text, index: false
   attribute :category, :select, collection: RolePlay.categories.keys.map { |k| [k.humanize, k] }
   attribute :active, index: true
   attribute :created_at, index: true, form: false

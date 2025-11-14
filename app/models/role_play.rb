@@ -2,6 +2,11 @@ class RolePlay < ApplicationRecord
   # PaperTrail versioning for audit logging
   has_paper_trail
 
+  # Action Text for rich markdown editing with Lexxy
+  has_rich_text :description
+  has_rich_text :llm_instructions
+  has_rich_text :recommended_for
+
   # Category enum
   enum :category, {
     communication: 0,
