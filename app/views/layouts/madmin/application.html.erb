@@ -14,16 +14,7 @@
     <%= render "javascript" %>
 
     <%# Include Lexxy for markdown editing - load after Madmin's JavaScript %>
-    <script type="importmap">
-    {
-      "imports": {
-        "lexxy": "/assets/lexxy.js"
-      }
-    }
-    </script>
-    <script type="module">
-      import "lexxy"
-    </script>
+    <%= javascript_include_tag "lexxy", type: "module" %>
     <%= stylesheet_link_tag "lexxy" %>
   </head>
   <body class="<%= controller_name %> <%= action_name %>" data-controller="mobile-nav">
