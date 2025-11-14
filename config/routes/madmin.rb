@@ -15,17 +15,17 @@ namespace :madmin, path: :admin do
   resources :users do
     resource :impersonate, module: :user
   end
-  resources :connected_accounts
+  # resources :connected_accounts
   resources :accounts
   resources :account_users
   resources :account_invitations
-  resources :plans
-  namespace :pay do
-    resources :customers
-    resources :charges
-    resources :payment_methods
-    resources :subscriptions
-  end
+  # resources :plans
+  # namespace :pay do
+  #   resources :customers
+  #   resources :charges
+  #   resources :payment_methods
+  #   resources :subscriptions
+  # end
 
   root to: "dashboard#show"
 end
