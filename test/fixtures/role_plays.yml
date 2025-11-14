@@ -1,19 +1,19 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  name: MyString
-  description: MyText
-  llm_instructions: MyText
-  duration_minutes: 1
-  recommended_for: MyText
-  category: 1
-  active: false
+  name: Fixture Test Scenario One
+  description: Test description for first fixture
+  llm_instructions: Test instructions for first fixture
+  duration_minutes: 10
+  recommended_for: Test recommendation for first fixture
+  category: 0  # communication
+  active: true
 
 two:
-  name: MyString
-  description: MyText
-  llm_instructions: MyText
-  duration_minutes: 1
-  recommended_for: MyText
-  category: 1
+  name: Fixture Test Scenario Two
+  description: Test description for second fixture
+  llm_instructions: Test instructions for second fixture
+  duration_minutes: 15
+  recommended_for: Test recommendation for second fixture
+  category: 1  # team_management
   active: false
