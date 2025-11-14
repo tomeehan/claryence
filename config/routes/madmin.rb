@@ -19,6 +19,7 @@ namespace :madmin, path: :admin do
   resources :accounts
   resources :account_users
   resources :account_invitations
+  resources :role_plays
   # resources :plans
   # namespace :pay do
   #   resources :customers
