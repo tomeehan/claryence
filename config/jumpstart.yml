@@ -4,7 +4,7 @@ business_name: Claryence Limited
 business_address: 
 domain: claryence.com
 support_email: support@claryence.com
-default_from_email: Claryence <no-reply@claryence.com>
+default_from_email: Claryence <tom@tomeehan.net>
 background_job_processor: sidekiq
 email_provider: postmark
 account_types: both
