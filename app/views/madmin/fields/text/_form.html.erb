@@ -1,14 +1,10 @@
 <%
-  # Use Lexxy markdown editor for specific fields, otherwise use regular text area
-  use_lexxy = ['description', 'llm_instructions', 'recommended_for'].include?(field.attribute_name.to_s)
+  # Use larger text areas for markdown fields
+  use_large_textarea = ['description', 'llm_instructions', 'recommended_for'].include?(field.attribute_name.to_s)
 %>
 
-<% if use_lexxy %>
-  <lexxy-editor
-    name="<%= form.object_name %>[<%= field.attribute_name %>]"
-    value="<%= form.object.send(field.attribute_name) %>"
-    placeholder="Enter <%= field.attribute_name.to_s.humanize.downcase %>...">
-  </lexxy-editor>
+<% if use_large_textarea %>
+  <%= form.text_area field.attribute_name, rows: 15, class: "form-input", placeholder: "Supports markdown formatting" %>
 <% else %>
   <%= form.text_area field.attribute_name, class: "form-input" %>
 <% end %>
