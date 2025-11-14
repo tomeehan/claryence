@@ -83,19 +83,16 @@ staging:
 
   cache:
     <<: *primary_staging
-    database: claryence_staging_cache
+    url: <%= ENV["DATABASE_URL"] %>
     migrations_paths: db/cache_migrate
-    # Or set CACHE_DATABASE_URL to override
   queue:
     <<: *primary_staging
-    database: claryence_staging_queue
+    url: <%= ENV["DATABASE_URL"] %>
     migrations_paths: db/queue_migrate
-    # Or set QUEUE_DATABASE_URL to override
   cable:
     <<: *primary_staging
-    database: claryence_staging_cable
+    url: <%= ENV["DATABASE_URL"] %>
     migrations_paths: db/cable_migrate
-    # Or set CABLE_DATABASE_URL to override
 
 # As with config/credentials.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -124,18 +121,15 @@ production:
 
   cache:
     <<: *primary_production
-    database: claryence_production_cache
+    url: <%= ENV["DATABASE_URL"] %>
     migrations_paths: db/cache_migrate
-    # Or set CACHE_DATABASE_URL to override
 
   queue:
     <<: *primary_production
-    database: claryence_production_queue
+    url: <%= ENV["DATABASE_URL"] %>
     migrations_paths: db/queue_migrate
-    # Or set QUEUE_DATABASE_URL to override
 
   cable:
     <<: *primary_production
-    database: claryence_production_cable
+    url: <%= ENV["DATABASE_URL"] %>
     migrations_paths: db/cable_migrate
-    # Or set CABLE_DATABASE_URL to override
