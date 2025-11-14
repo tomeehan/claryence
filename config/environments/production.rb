@@ -103,7 +103,7 @@ Rails.application.configure do
     }
   when "postmark"
     config.action_mailer.delivery_method = :postmark
-    config.action_mailer.postmark_settings = {api_token: Rails.application.credentials.dig(:postmark, :api_token)}
+    config.action_mailer.postmark_settings = {api_token: ENV['POSTMARK_API']}
   when "resend"
     config.action_mailer.delivery_method = :resend
     Resend.api_key = Rails.application.credentials.dig(:resend, :api_key)
