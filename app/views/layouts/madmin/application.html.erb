@@ -13,8 +13,18 @@
     <%= csrf_meta_tags %>
     <%= render "javascript" %>
 
-    <%# Include Lexxy for markdown editing - load after Madmin's JavaScript %>
-    <%= javascript_include_tag "lexxy", type: "module" %>
+    <%# Include Lexxy for markdown editing - add missing dependencies to importmap %>
+    <script type="importmap">
+    {
+      "imports": {
+        "@rails/activestorage": "<%= asset_path "activestorage.esm.js" %>",
+        "lexxy": "<%= asset_path "lexxy.js" %>"
+      }
+    }
+    </script>
+    <script type="module">
+      import "lexxy"
+    </script>
     <%= stylesheet_link_tag "lexxy" %>
   </head>
   <body class="<%= controller_name %> <%= action_name %>" data-controller="mobile-nav">
