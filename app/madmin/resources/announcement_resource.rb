@@ -1,4 +1,6 @@
 class AnnouncementResource < Madmin::Resource
+  menu false
+
   scope :draft
   scope :published
 
