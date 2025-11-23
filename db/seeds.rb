@@ -28,10 +28,9 @@ puts "✓ Cleared existing role play scenarios"
 
 # Helper method to convert markdown to HTML for Action Text
 def markdown_to_html(markdown)
-  Commonmarker.to_html(markdown, options: {
-    parse: {smart: true},
-    render: {unsafe: true} # Allow HTML in markdown
-  })
+  renderer = Redcarpet::Render::HTML.new(hard_wrap: true)
+  parser = Redcarpet::Markdown.new(renderer, autolink: true, tables: true, fenced_code_blocks: true)
+  parser.render(markdown)
 end
 
 RolePlay.create!(name: "Delegation") do |rp|

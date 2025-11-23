@@ -50,8 +50,8 @@ gem "paper_trail", "~> 15.0"
 # Markdown editor for admin interfaces [https://github.com/basecamp/lexxy]
 gem "lexxy", "~> 0.1"
 
-# Markdown to HTML converter [https://github.com/gjtorikian/commonmarker]
-gem "commonmarker", "~> 1.0"
+# Markdown to HTML converter [https://github.com/vmg/redcarpet]
+gem "redcarpet", "~> 3.6"
 
 # OpenAI Integration
 gem "ruby-openai", "~> 7.3"

@@ -1,6 +1,5 @@
 class RolePlayResource < Madmin::Resource
   # Scopes
-  scope :all
   scope :active
   scope :communication
   scope :team_management
