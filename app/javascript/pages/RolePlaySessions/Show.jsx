@@ -7,10 +7,6 @@ export default function Show() {
   const page = useSelector((state) => state.pages[currentPageKey])
   const data = page?.data || {}
 
-  console.log('Current page key:', currentPageKey)
-  console.log('Page data:', data)
-  console.log('Messages from data:', data.messages)
-
   const [messages, setMessages] = useState(data.messages || [])
   const [input, setInput] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
@@ -19,8 +15,6 @@ export default function Show() {
   const channelRef = useRef(null)
 
   useEffect(() => {
-    console.log('Initializing Action Cable for session:', data.session_id)
-
     // Initialize Action Cable
     const cable = createConsumer()
     const channel = cable.subscriptions.create(
@@ -29,24 +23,12 @@ export default function Show() {
         session_id: data.session_id
       },
       {
-        connected() {
-          console.log('Connected to ChatChannel')
-        },
-        disconnected() {
-          console.log('Disconnected from ChatChannel')
-        },
+        connected() {},
+        disconnected() {},
         received(data) {
-          console.log('Received data:', data)
-          console.log('Data type:', data.type)
-
           switch (data.type) {
             case 'user_message':
-              console.log('Adding user message:', data.message)
-              setMessages(prev => {
-                const newMessages = [...prev, data.message]
-                console.log('New messages array:', newMessages)
-                return newMessages
-              })
+              setMessages(prev => [...prev, data.message])
               break
 
             case 'assistant_start':
@@ -77,7 +59,6 @@ export default function Show() {
     channelRef.current = channel
 
     return () => {
-      console.log('Unsubscribing from ChatChannel')
       channel.unsubscribe()
     }
   }, [data.session_id])
@@ -91,19 +72,11 @@ export default function Show() {
     e.preventDefault()
     if (!input.trim() || isStreaming) return
 
-    console.log('Sending message:', input)
-    console.log('Channel:', channelRef.current)
-
     if (channelRef.current) {
       channelRef.current.perform('send_message', { content: input })
       setInput('')
-    } else {
-      console.error('Channel not initialized!')
     }
   }
-
-  console.log('Rendering with messages:', messages)
-  console.log('Messages length:', messages.length)
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
