@@ -29,8 +29,8 @@ puts "✓ Cleared existing role play scenarios"
 # Helper method to convert markdown to HTML for Action Text
 def markdown_to_html(markdown)
   Commonmarker.to_html(markdown, options: {
-    parse: { smart: true },
-    render: { unsafe: true } # Allow HTML in markdown
+    parse: {smart: true},
+    render: {unsafe: true} # Allow HTML in markdown
   })
 end
 

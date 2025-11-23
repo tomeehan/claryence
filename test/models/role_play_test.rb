@@ -28,7 +28,7 @@ class RolePlayTest < ActiveSupport::TestCase
   end
 
   test "should require unique name" do
-    existing = RolePlay.create!(
+    RolePlay.create!(
       name: "Unique Scenario",
       description: "Test description",
       llm_instructions: "Test instructions",

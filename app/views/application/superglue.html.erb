@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Claryence - AI Chat</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+  </head>
+
+  <body>
+    <script type="text/javascript">
+      window.SUPERGLUE_INITIAL_PAGE_STATE=<%=
+        Jbuilder.encode do |json|
+          json.data do
+            json.session_id @session.id
+            json.role_play_id @session.role_play_id
+            json.status @session.status
+            json.messages @messages do |message|
+              json.id message.id
+              json.role message.role
+              json.content message.content
+              json.created_at message.created_at
+            end
+          end
+          json.componentIdentifier "role_play_sessions/show"
+          json.defers []
+          json.fragments []
+          json.assets [asset_path('application.js')]
+          json.csrfToken form_authenticity_token
+          json.restoreStrategy 'fromCacheAndRevisitInBackground'
+          json.renderedAt Time.now.to_i
+          json.slices do
+            json.flash flash.to_h
+          end
+        end.html_safe
+      %>;
+    </script>
+
+    <div id="app"></div>
+  </body>
+</html>

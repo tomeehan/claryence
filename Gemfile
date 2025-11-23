@@ -12,7 +12,8 @@ gem "pg"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", "~> 7.0"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
-gem "importmap-rails"
+# gem "importmap-rails" # Disabled for Superglue/React
+gem "jsbundling-rails"
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails", "~> 2.0.3"
 # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
@@ -52,6 +53,12 @@ gem "lexxy", "~> 0.1"
 # Markdown to HTML converter [https://github.com/gjtorikian/commonmarker]
 gem "commonmarker", "~> 1.0"
 
+# OpenAI Integration
+gem "ruby-openai", "~> 7.3"
+
+# React with Superglue for chat UI
+gem "superglue", "~> 1.1"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[mri windows], require: "debug/prelude"
@@ -69,16 +76,22 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console", ">= 4.1.0"
+
+  # Load environment variables from .env
+  gem "dotenv-rails"
 end
 
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara", ">= 3.39"
   gem "selenium-webdriver", ">= 4.20.1"
+
+  # API mocking for OpenAI tests
+  gem "vcr", "~> 6.3"
 end
 
 # Use Redis adapter to run Action Cable in production
-# gem "redis", "~> 5.1"
+gem "redis", "~> 5.1"
 
 # Use the latest Trix
 gem "action_text-trix", "~> 2.1"

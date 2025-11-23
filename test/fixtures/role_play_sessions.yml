@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  account: one
+  account_user: one
+  role_play: one
+  started_at: 2025-11-21 08:11:07
+  completed_at: 2025-11-21 08:11:07
+  duration_seconds: 1
+  status: MyString
+  system_prompt: MyText
+  session_number: 1
+
+two:
+  account: two
+  account_user: two
+  role_play: two
+  started_at: 2025-11-21 08:11:07
+  completed_at: 2025-11-21 08:11:07
+  duration_seconds: 1
+  status: MyString
+  system_prompt: MyText
+  session_number: 1

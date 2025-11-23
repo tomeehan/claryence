@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  role_play_session: one
+  account: one
+  role: MyString
+  content: MyText
+  token_count: 1
+
+two:
+  role_play_session: two
+  account: two
+  role: MyString
+  content: MyText
+  token_count: 1

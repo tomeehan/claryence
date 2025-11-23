@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_14_114234) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_21_081114) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -116,6 +116,18 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_14_114234) do
     t.bigint "user_id", null: false
     t.index ["token"], name: "index_api_tokens_on_token", unique: true
     t.index ["user_id"], name: "index_api_tokens_on_user_id"
+  end
+
+  create_table "chat_messages", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.string "role"
+    t.bigint "role_play_session_id", null: false
+    t.integer "token_count"
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_chat_messages_on_account_id"
+    t.index ["role_play_session_id"], name: "index_chat_messages_on_role_play_session_id"
   end
 
   create_table "connected_accounts", force: :cascade do |t|
@@ -312,6 +324,23 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_14_114234) do
     t.datetime "updated_at", precision: nil, null: false
   end
 
+  create_table "role_play_sessions", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.bigint "account_user_id", null: false
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.integer "duration_seconds"
+    t.bigint "role_play_id", null: false
+    t.integer "session_number"
+    t.datetime "started_at"
+    t.string "status"
+    t.text "system_prompt"
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_role_play_sessions_on_account_id"
+    t.index ["account_user_id"], name: "index_role_play_sessions_on_account_user_id"
+    t.index ["role_play_id"], name: "index_role_play_sessions_on_role_play_id"
+  end
+
   create_table "role_plays", force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.integer "category", null: false
@@ -383,7 +412,12 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_14_114234) do
   add_foreign_key "accounts", "users", column: "owner_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "api_tokens", "users"
+  add_foreign_key "chat_messages", "accounts"
+  add_foreign_key "chat_messages", "role_play_sessions"
   add_foreign_key "pay_charges", "pay_customers", column: "customer_id"
   add_foreign_key "pay_payment_methods", "pay_customers", column: "customer_id"
   add_foreign_key "pay_subscriptions", "pay_customers", column: "customer_id"
+  add_foreign_key "role_play_sessions", "account_users"
+  add_foreign_key "role_play_sessions", "accounts"
+  add_foreign_key "role_play_sessions", "role_plays"
 end
