@@ -7,6 +7,7 @@
   <script>document.documentElement.classList.toggle("dark", window.matchMedia('(prefers-color-scheme: dark)').matches)</script>
 <% end %>
 <%= javascript_importmap_tags %>
+<%= javascript_import_module_tag "controllers" %>
 <%= stylesheet_link_tag "tailwind", media: "all", "data-turbo-track": "reload" %>
 <%= stylesheet_link_tag "lexxy" %>
 <%= render "payments_dependencies" %>
