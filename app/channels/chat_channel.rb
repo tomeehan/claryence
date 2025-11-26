@@ -117,7 +117,7 @@ class ChatChannel < ApplicationCable::Channel
     return unless session.account_id == current_account.id
 
     # Only start if no prior messages exist
-    return unless session.chat_messages.exists? == false
+    return if session.chat_messages.exists?
 
     messages = []
     messages << { role: "system", content: session.system_prompt } if session.system_prompt.present?

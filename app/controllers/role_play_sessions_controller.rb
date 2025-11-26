@@ -27,11 +27,6 @@ class RolePlaySessionsController < ApplicationController
   def show
     @messages = @session.chat_messages.ordered
 
-    # If a session has no messages yet, kick off the AI's opening line
-    if @messages.empty? && @session.status == "active"
-      GenerateInitialMessageJob.perform_later(@session.id)
-    end
-
     # Force rendering with Superglue
     if request.format.html?
       render template: "application/superglue", layout: false

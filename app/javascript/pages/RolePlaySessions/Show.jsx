@@ -215,6 +215,7 @@ export default function Show() {
   const assistantDoneRef = useRef(false);
   const pendingAssistantMessageRef = useRef(null);
   const streamingContentRef = useRef("");
+  const startedRef = useRef(false);
   // Approx reading speed: 200 WPM ≈ 16.7 chars/sec
   const READING_WPM = 200;
   const CHARS_PER_SECOND = (READING_WPM * 5) / 60;
@@ -245,7 +246,14 @@ export default function Show() {
         session_id: data.session_id,
       },
       {
-        connected() {},
+        connected() {
+          // Start conversation on connect if there are no messages yet
+          const hasMessages = (data.messages || []).length > 0;
+          if (!hasMessages && !startedRef.current) {
+            startedRef.current = true;
+            try { this.perform("start_conversation", {}); } catch (e) {}
+          }
+        },
         disconnected() {},
         received(data) {
           switch (data.type) {
@@ -307,13 +315,11 @@ export default function Show() {
 
     channelRef.current = channel;
 
-    // If there are no messages yet, ask the server to start the conversation
-    if ((data.messages || []).length === 0) {
-      try {
-        channel.perform("start_conversation", {});
-      } catch (e) {
-        // no-op
-      }
+    // Fallback: also attempt immediately after subscription
+    const hasMessages = (data.messages || []).length > 0;
+    if (!hasMessages && !startedRef.current) {
+      startedRef.current = true;
+      try { channel.perform("start_conversation", {}); } catch (e) {}
     }
 
     return () => {
