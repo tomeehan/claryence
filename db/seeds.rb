@@ -488,31 +488,4 @@ end
 
 puts "✓ Created #{RolePlay.count} role play scenarios"
 
-# Knowledge (global guidance used in conversation reviews and dashboard advice)
-puts "Seeding knowledge..."
-
-knowledge_items = [
-  <<~TXT.strip,
-    Focus feedback on specific behaviors and their impact, not on the person's character. Tie observations to concrete examples, describe the effect on the team or outcomes, and propose next steps. Keep it short and direct.
-  TXT
-  <<~TXT.strip,
-    Ask one clear question at a time. Avoid stacking multiple questions in a single turn. Let the other person think and respond before adding more detail or context.
-  TXT
-  <<~TXT.strip,
-    Build psychological safety: acknowledge feelings, validate legitimate concerns, and show curiosity. Use openers like "Help me understand..." or "What feels hardest right now?" to invite honest dialogue.
-  TXT
-  <<~TXT.strip,
-    Summarize and align before closing: restate what you heard, confirm agreements, and clarify ownership, deadlines, and check‑in cadence. Ensure both sides share the same definition of success.
-  TXT
-  <<~TXT.strip,
-    Calibrate tone and length to the moment. Prefer 1–3 concise sentences, natural language, and plain words. Avoid lists and corporate jargon in live conversation.
-  TXT
-]
-
-knowledge_items.each do |content|
-  Knowledge.find_or_create_by!(content: content) do |k|
-    k.active = true
-  end
-end
-
-puts "✓ Seeded #{Knowledge.count} knowledge items"
+puts "Skipping Knowledge seeding in seeds.rb (use `bin/rails knowledge:seed_defaults`)."
