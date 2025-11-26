@@ -28,25 +28,7 @@
         </div>
       <% end %>
 
-      <!-- Advice Card -->
-      <div class="block p-6 bg-white rounded-lg border border-gray-200">
-        <div class="flex items-center gap-4 mb-4">
-          <div class="flex-shrink-0 w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 text-emerald-600">
-              <path fill-rule="evenodd" d="M11.484 3.077a.75.75 0 0 1 1.032 0l7.5 7.25a.75.75 0 0 1-1.032 1.09L12 4.712 5.016 11.417a.75.75 0 1 1-1.032-1.09l7.5-7.25Zm0 6a.75.75 0 0 1 1.032 0l4.5 4.35a.75.75 0 1 1-1.032 1.09L12 10.212l-3.984 3.305a.75.75 0 1 1-1.032-1.09l4.5-4.35ZM4.5 18.75A2.25 2.25 0 0 0 6.75 21h10.5A2.25 2.25 0 0 0 19.5 18.75v-3a.75.75 0 0 0-1.5 0v3c0 .414-.336.75-.75.75H6.75a.75.75 0 0 1-.75-.75v-3a.75.75 0 0 0-1.5 0v3Z" clip-rule="evenodd" />
-            </svg>
-          </div>
-          <div>
-            <h3 class="text-lg font-semibold text-gray-900">Advice</h3>
-          </div>
-        </div>
-
-        <% if @knowledge_advice.present? %>
-          <div class="prose prose-sm max-w-none text-gray-700 whitespace-pre-wrap"><%= truncate(@knowledge_advice.content.to_s, length: 240) %></div>
-        <% else %>
-          <p class="text-gray-600 text-sm">No advice yet. Check back soon.</p>
-        <% end %>
-      </div>
+      
     </div>
   </div>
 </div>
