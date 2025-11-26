@@ -1,34 +1,37 @@
-namespace :knowledge do
-  desc "Seed default Knowledge items (idempotent)"
-  task seed_defaults: :environment do
-    items = [
-      <<~TXT.strip,
-        Focus feedback on specific behaviors and their impact, not on the person's character. Tie observations to concrete examples, describe the effect on the team or outcomes, and propose next steps. Keep it short and direct.
-      TXT
-      <<~TXT.strip,
-        Ask one clear question at a time. Avoid stacking multiple questions in a single turn. Let the other person think and respond before adding more detail or context.
-      TXT
-      <<~TXT.strip,
-        Build psychological safety: acknowledge feelings, validate legitimate concerns, and show curiosity. Use openers like "Help me understand..." or "What feels hardest right now?" to invite honest dialogue.
-      TXT
-      <<~TXT.strip,
-        Summarize and align before closing: restate what you heard, confirm agreements, and clarify ownership, deadlines, and check‑in cadence. Ensure both sides share the same definition of success.
-      TXT
-      <<~TXT.strip,
-        Calibrate tone and length to the moment. Prefer 1–3 concise sentences, natural language, and plain words. Avoid lists and corporate jargon in live conversation.
-      TXT
-    ]
+require 'yaml'
 
-    created = 0
-    items.each do |content|
-      record = Knowledge.find_or_create_by!(content: content)
-      if record.saved_changes?
-        created += 1
-      end
-      record.update!(active: true) if record.active != true
+namespace :knowledge do
+  desc "Seed Knowledge items from db/seed_data/knowledge.yml (idempotent). Use LIMIT=100 to cap."
+  task seed_defaults: :environment do
+    path = Rails.root.join('db/seed_data/knowledge.yml')
+    items = if File.exist?(path)
+      YAML.load_file(path) || []
+    else
+      [
+        "Focus feedback on specific behaviors and their impact, not on the person's character. Tie observations to concrete examples, describe the effect on outcomes, and propose next steps.",
+        "Ask one clear question at a time. Avoid stacking multiple questions in a single turn.",
+        "Build psychological safety: acknowledge feelings, validate concerns, and show curiosity before offering suggestions.",
+        "Summarize and align before closing: restate agreements, ownership, deadlines, and check‑in cadence.",
+        "Calibrate tone and length to the moment. Prefer 1–3 concise sentences in live conversation."
+      ]
     end
 
-    puts "Seeded Knowledge defaults. Total: #{Knowledge.count}, newly created: #{created}."
+    limit = ENV['LIMIT']&.to_i
+    items = items.first(limit) if limit && limit > 0
+
+    created = 0
+    activated = 0
+    items.each do |raw|
+      content = raw.to_s.strip
+      next if content.blank?
+      record = Knowledge.find_or_create_by!(content: content)
+      created += 1 if record.previous_changes.key?('id')
+      if record.active != true
+        record.update!(active: true)
+        activated += 1
+      end
+    end
+
+    puts "Seeded Knowledge. File: #{path.exist? ? 'present' : 'missing (used defaults)'}; processed: #{items.size}, created: #{created}, activated: #{activated}, total: #{Knowledge.count}."
   end
 end
-
