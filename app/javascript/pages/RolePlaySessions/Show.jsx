@@ -538,12 +538,86 @@ export default function Show() {
         <aside className="w-1/3 bg-gray-100 px-6 py-4 overflow-y-auto text-gray-900 min-h-0">
           <div className="space-y-4">
             <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
-              Clary debugger
+              Conversation Review
             </h2>
-            {review && <Markdown text={review} />}
+            <ReviewPanel review={review} />
           </div>
         </aside>
       </div>
     </div>
   );
+}
+
+function ReviewPanel({ review }) {
+  if (!review) return null;
+
+  const parsed = splitReview(review);
+  if (!parsed) {
+    return <Markdown text={review} />;
+  }
+
+  const { good, improve } = parsed;
+  return (
+    <div className="space-y-4">
+      <div className="bg-white border border-gray-200 rounded-lg p-4">
+        <h3 className="text-sm font-semibold text-gray-800 mb-2">What went well</h3>
+        {good.length > 0 ? (
+          <ul className="list-disc ml-5 space-y-1 text-gray-800">
+            {good.map((b, i) => (
+              <li key={`good-${i}`}>{b}</li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-gray-500 text-sm">No highlights yet.</p>
+        )}
+      </div>
+
+      <div className="bg-white border border-gray-200 rounded-lg p-4">
+        <h3 className="text-sm font-semibold text-gray-800 mb-2">What could be better</h3>
+        {improve.length > 0 ? (
+          <ul className="list-disc ml-5 space-y-1 text-gray-800">
+            {improve.map((b, i) => (
+              <li key={`imp-${i}`}>{b}</li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-gray-500 text-sm">No improvements noted.</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function splitReview(text) {
+  // Expecting sections:
+  // What went well:\n- bullet\n- bullet\n\nWhat could be better:\n- bullet...
+  const lines = (text || "").split(/\r?\n/);
+  let section = null;
+  const good = [];
+  const improve = [];
+
+  for (let raw of lines) {
+    const line = raw.trim();
+    if (!line) continue;
+    if (/^\{\s*"wrapping_up"\s*:\s*(true|false)\s*\}$/i.test(line)) {
+      // ignore trailing JSON control line
+      continue;
+    }
+    if (/^what went well\s*:\s*$/i.test(line)) {
+      section = "good";
+      continue;
+    }
+    if (/^what could be better\s*:\s*$/i.test(line)) {
+      section = "improve";
+      continue;
+    }
+    if (/^[-*]\s+/.test(line)) {
+      const bullet = line.replace(/^[-*]\s+/, "").trim();
+      if (section === "good") good.push(bullet);
+      else if (section === "improve") improve.push(bullet);
+    }
+  }
+
+  if (good.length === 0 && improve.length === 0) return null;
+  return { good, improve };
 }
