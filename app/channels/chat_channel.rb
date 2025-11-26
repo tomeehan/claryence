@@ -110,4 +110,61 @@ class ChatChannel < ApplicationCable::Channel
       })
     end
   end
+
+  # Starts the conversation with an opening assistant message if no messages exist
+  def start_conversation(_data = nil)
+    session = RolePlaySession.find(params[:session_id])
+    return unless session.account_id == current_account.id
+
+    # Only start if no prior messages exist
+    return unless session.chat_messages.exists? == false
+
+    messages = []
+    messages << { role: "system", content: session.system_prompt } if session.system_prompt.present?
+    messages << { role: "user", content: "Hello" }
+
+    ai_content = ""
+    openai = OpenaiService.new
+
+    ChatChannel.broadcast_to(session, { type: "assistant_start" })
+
+    begin
+      openai.chat_completion_stream(
+        messages,
+        model: "gpt-4o",
+        temperature: 0.9,
+        top_p: 0.9,
+        presence_penalty: 0.2,
+        frequency_penalty: 0.2,
+        max_tokens: 140
+      ) do |chunk|
+        ai_content += chunk
+        ChatChannel.broadcast_to(session, { type: "assistant_chunk", content: chunk })
+      end
+
+      assistant_message = session.chat_messages.create!(
+        role: "assistant",
+        content: ai_content,
+        account_id: session.account_id
+      )
+
+      ChatChannel.broadcast_to(session, {
+        type: "assistant_complete",
+        message: {
+          id: assistant_message.id,
+          role: "assistant",
+          content: assistant_message.content,
+          created_at: assistant_message.created_at
+        }
+      })
+
+      ConversationReviewJob.perform_later(session.id)
+    rescue => e
+      Rails.logger.error("OpenAI Error (start_conversation): #{e.message}")
+      ChatChannel.broadcast_to(session, {
+        type: "error",
+        message: "Sorry, there was an error starting the conversation. Please try again."
+      })
+    end
+  end
 end

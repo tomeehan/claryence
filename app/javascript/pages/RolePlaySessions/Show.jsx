@@ -307,6 +307,15 @@ export default function Show() {
 
     channelRef.current = channel;
 
+    // If there are no messages yet, ask the server to start the conversation
+    if ((data.messages || []).length === 0) {
+      try {
+        channel.perform("start_conversation", {});
+      } catch (e) {
+        // no-op
+      }
+    }
+
     return () => {
       channel.unsubscribe();
     };
