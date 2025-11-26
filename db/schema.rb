@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_21_081114) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_26_002000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -150,6 +150,14 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_21_081114) do
     t.datetime "created_at", null: false
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "knowledges", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.text "content"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_knowledges_on_active"
   end
 
   create_table "noticed_events", force: :cascade do |t|
@@ -375,6 +383,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_21_081114) do
     t.string "invited_by_type"
     t.string "last_name"
     t.integer "last_otp_timestep"
+    t.text "llm_context"
     t.virtual "name", type: :string, as: "(((first_name)::text || ' '::text) || (COALESCE(last_name, ''::character varying))::text)", stored: true
     t.text "otp_backup_codes"
     t.boolean "otp_required_for_login"

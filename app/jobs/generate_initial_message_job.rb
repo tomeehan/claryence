@@ -12,7 +12,15 @@ class GenerateInitialMessageJob < ApplicationJob
 
     # Get AI's initial greeting
     openai = OpenaiService.new
-    response = openai.chat_completion(messages)
+    response = openai.chat_completion(
+      messages,
+      model: "gpt-4o",
+      temperature: 0.9,
+      top_p: 0.9,
+      presence_penalty: 0.2,
+      frequency_penalty: 0.2,
+      max_tokens: 140
+    )
 
     # Save the assistant's greeting message
     assistant_message = session.chat_messages.create!(

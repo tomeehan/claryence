@@ -42,6 +42,9 @@ class ChatChannel < ApplicationCable::Channel
       }
     })
 
+    # Trigger a quick conversation review immediately so feedback starts streaming
+    ConversationReviewJob.perform_later(session.id)
+
     # Get conversation history
     messages = session.chat_messages.ordered.map do |msg|
       {role: msg.role, content: msg.content}
@@ -64,7 +67,14 @@ class ChatChannel < ApplicationCable::Channel
     })
 
     begin
-      openai.chat_completion_stream(messages) do |chunk|
+      openai.chat_completion_stream(
+        messages,
+        model: "gpt-4o",
+        temperature: 0.95,
+        top_p: 0.9,
+        presence_penalty: 0.2,
+        frequency_penalty: 0.2
+      ) do |chunk|
         ai_content += chunk
         ChatChannel.broadcast_to(session, {
           type: "assistant_chunk",
@@ -89,6 +99,9 @@ class ChatChannel < ApplicationCable::Channel
           created_at: assistant_message.created_at
         }
       })
+
+      # Trigger updated review after assistant reply (final pass)
+      ConversationReviewJob.perform_later(session.id)
     rescue => e
       Rails.logger.error("OpenAI Error: #{e.message}")
       ChatChannel.broadcast_to(session, {

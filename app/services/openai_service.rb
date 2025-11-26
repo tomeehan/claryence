@@ -6,28 +6,34 @@ class OpenaiService
     )
   end
 
-  def chat_completion_stream(messages, &block)
-    @client.chat(
-      parameters: {
-        model: "gpt-4o",
-        messages: messages,
-        temperature: 0.8,
-        stream: proc do |chunk, _bytesize|
-          delta = chunk.dig("choices", 0, "delta", "content")
-          block.call(delta) if delta
-        end
-      }
-    )
+  def chat_completion_stream(messages, model: "gpt-4o", temperature: 0.8, max_tokens: nil, top_p: nil, presence_penalty: nil, frequency_penalty: nil, &block)
+    params = {
+      model: model,
+      messages: messages,
+      temperature: temperature,
+      stream: proc do |chunk, _bytesize|
+        delta = chunk.dig("choices", 0, "delta", "content")
+        block.call(delta) if delta
+      end
+    }
+    params[:top_p] = top_p if top_p
+    params[:presence_penalty] = presence_penalty if presence_penalty
+    params[:frequency_penalty] = frequency_penalty if frequency_penalty
+    params[:max_tokens] = max_tokens if max_tokens
+    @client.chat(parameters: params)
   end
 
-  def chat_completion(messages)
-    response = @client.chat(
-      parameters: {
-        model: "gpt-4-turbo",
-        messages: messages,
-        temperature: 0.8
-      }
-    )
+  def chat_completion(messages, model: "gpt-4-turbo", temperature: 0.8, max_tokens: nil, top_p: nil, presence_penalty: nil, frequency_penalty: nil)
+    params = {
+      model: model,
+      messages: messages,
+      temperature: temperature
+    }
+    params[:top_p] = top_p if top_p
+    params[:presence_penalty] = presence_penalty if presence_penalty
+    params[:frequency_penalty] = frequency_penalty if frequency_penalty
+    params[:max_tokens] = max_tokens if max_tokens
+    response = @client.chat(parameters: params)
 
     {
       content: response.dig("choices", 0, "message", "content"),

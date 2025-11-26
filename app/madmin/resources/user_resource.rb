@@ -7,6 +7,7 @@ class UserResource < Madmin::Resource
   attribute :email
   attribute :password, :password, edit: false
   attribute :terms_of_service, :boolean, edit: false
+  attribute :llm_context, :text, index: false
   attribute :time_zone, form: false
   attribute :reset_password_sent_at, form: false
   attribute :remember_created_at, form: false
