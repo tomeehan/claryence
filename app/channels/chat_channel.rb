@@ -6,6 +6,11 @@ class ChatChannel < ApplicationCable::Channel
     if session.account_id == current_account.id
       Rails.logger.info "ChatChannel subscription authorized for session #{session.id}"
       stream_for session
+      # Auto-start conversation server-side if fresh
+      if session.status == "active" && !session.chat_messages.exists?
+        Rails.logger.info "ChatChannel subscribed: triggering start_conversation for fresh session #{session.id}"
+        start_conversation
+      end
     else
       Rails.logger.warn "ChatChannel subscription rejected - account mismatch"
       reject
