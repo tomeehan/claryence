@@ -201,6 +201,8 @@ export default function Show() {
   const [streamingContent, setStreamingContent] = useState("");
   // Streaming pacing state for reading-speed reveal
   const [streamBuffer, setStreamBuffer] = useState("");
+  // Skip streaming display for the very first assistant message
+  const [skipStreamingDisplay, setSkipStreamingDisplay] = useState(false);
   const [assistantDone, setAssistantDone] = useState(false);
   const [pendingAssistantMessage, setPendingAssistantMessage] = useState(null);
   const [review, setReview] = useState("");
@@ -262,6 +264,8 @@ export default function Show() {
               break;
 
             case "assistant_start":
+              // If there are no prior messages, don't type out the first message
+              setSkipStreamingDisplay((messages?.length || 0) === 0);
               setIsStreaming(true);
               setStreamingContent("");
               setStreamBufferSync("");
@@ -272,15 +276,28 @@ export default function Show() {
               break;
 
             case "assistant_chunk":
-              setStreamBufferSync(
-                (streamBufferRef.current || "") + (data.content || ""),
-              );
+              if (!skipStreamingDisplay) {
+                setStreamBufferSync(
+                  (streamBufferRef.current || "") + (data.content || ""),
+                );
+              }
               break;
 
             case "assistant_complete":
-              // Mark done but allow paced reveal to finish before finalizing
-              setAssistantDone(true);
-              setPendingAssistantMessage(data.message);
+              if (skipStreamingDisplay) {
+                // Instantly show the full first message without typing effect
+                setIsStreaming(false);
+                setMessages((prev) => [...prev, data.message]);
+                setStreamingContent("");
+                setStreamBufferSync("");
+                setPendingAssistantMessage(null);
+                setAssistantDone(false);
+                setSkipStreamingDisplay(false);
+              } else {
+                // Mark done but allow paced reveal to finish before finalizing
+                setAssistantDone(true);
+                setPendingAssistantMessage(data.message);
+              }
               break;
 
             case "error":
@@ -379,10 +396,10 @@ export default function Show() {
       }, 50);
     };
 
-    if (isStreaming && !revealTimerRef.current) {
+    if (isStreaming && !skipStreamingDisplay && !revealTimerRef.current) {
       startTimer();
     }
-    if (!isStreaming && revealTimerRef.current) {
+    if ((!isStreaming || skipStreamingDisplay) && revealTimerRef.current) {
       clearInterval(revealTimerRef.current);
       revealTimerRef.current = null;
     }
@@ -392,7 +409,7 @@ export default function Show() {
         revealTimerRef.current = null;
       }
     };
-  }, [isStreaming]);
+  }, [isStreaming, skipStreamingDisplay]);
 
   // Auto-resize textarea up to 4 lines, then allow scroll
   const autoResize = () => {
@@ -502,7 +519,7 @@ export default function Show() {
               ))}
 
               {/* Streaming message */}
-              {isStreaming && streamingContent && (
+              {isStreaming && streamingContent && !skipStreamingDisplay && (
                 <div className="flex justify-start">
                   <div className="max-w-2xl rounded-lg px-4 py-3 bg-white text-gray-900 border border-gray-200">
                     <div className="whitespace-pre-wrap">
