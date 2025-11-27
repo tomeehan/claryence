@@ -1,7 +1,7 @@
 <nav class="top-nav" data-controller="toggle">
   <section class="logo">
-    <%= link_to root_path do %>
-      <%= render_svg "logo", styles: "fill-current" %>
+    <%= link_to root_path, class: "block overflow-hidden" do %>
+      <%= image_tag "logo.jpeg", alt: Jumpstart.config.application_name, class: "h-24 w-auto -my-6" %>
       <span class="sr-only"><%= Jumpstart.config.application_name %></span>
     <% end %>
   </section>
