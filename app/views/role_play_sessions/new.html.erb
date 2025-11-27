@@ -25,7 +25,7 @@
       </ul>
     </div>
 
-    <%= form_with url: role_play_role_play_sessions_path(role_play), method: :post, local: true do |f| %>
+    <%= form_with url: role_play_role_play_sessions_path(role_play), method: :post, local: true, data: { controller: "loading-submit" } do |f| %>
       <div class="flex gap-4">
         <%= f.submit "Start Chat Session", class: "flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors cursor-pointer" %>
         <%= link_to "Cancel", role_plays_path, class: "px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors" %>
