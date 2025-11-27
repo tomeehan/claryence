@@ -8,10 +8,14 @@ export default class extends Controller {
   connect() {
     this.start = this.start.bind(this)
     this.end = this.end.bind(this)
+    this.onSubmit = this.onSubmit.bind(this)
 
     // Listen on nearest form only
     this.form = this.element.closest("form")
     if (this.form) {
+      // Fire immediately for non‑Turbo (local) submits
+      this.form.addEventListener("submit", this.onSubmit)
+      // Also handle Turbo lifecycle when enabled
       this.form.addEventListener("turbo:submit-start", this.start)
       this.form.addEventListener("turbo:submit-end", this.end)
     }
@@ -20,10 +24,13 @@ export default class extends Controller {
 
   disconnect() {
     if (this.form) {
+      this.form.removeEventListener("submit", this.onSubmit)
       this.form.removeEventListener("turbo:submit-start", this.start)
       this.form.removeEventListener("turbo:submit-end", this.end)
     }
   }
+
+  onSubmit() { this.start() }
 
   start() {
     this.toggle(true)
