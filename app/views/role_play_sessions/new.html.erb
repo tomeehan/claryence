@@ -2,7 +2,7 @@
 
 <div class="container mx-auto px-4 py-8 max-w-2xl">
   <div class="mb-8">
-    <%= link_to "← Back to Role Plays", role_plays_path, class: "text-blue-600 hover:text-blue-700" %>
+    <%= link_to "← Back to Role Plays", role_plays_path, class: "text-[#1a365d] hover:text-[#142849]" %>
   </div>
 
   <% role_play = @role_play || RolePlay.find_by(id: params[:role_play_id]) %>
@@ -15,7 +15,7 @@
       </div>
     <% end %>
 
-    <div class="mb-8 p-4 bg-blue-50 rounded-lg border border-blue-100">
+    <div class="mb-8 p-4 bg-[#1a365d]/5 rounded-lg border border-[#1a365d]/10">
       <h3 class="font-semibold text-gray-900 mb-2">What to expect:</h3>
       <ul class="text-sm text-gray-700 space-y-1">
         <li>• AI will role-play based on the scenario</li>
@@ -27,7 +27,7 @@
 
     <%= form_with url: role_play_role_play_sessions_path(role_play), method: :post, local: true do |f| %>
       <div class="flex gap-4">
-        <button type="submit" data-controller="submit-loading" class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors cursor-pointer btn btn-primary">
+        <button type="submit" data-controller="submit-loading" class="flex-1 px-6 py-3 bg-[#1a365d] text-white rounded-lg font-medium hover:bg-[#142849] transition-colors cursor-pointer btn btn-primary">
           <span data-submit-loading-target="label" class="inline-flex items-center gap-2">Start Chat Session</span>
           <span data-submit-loading-target="spinner" class="hidden items-center gap-2">
             <span class="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" aria-hidden="true"></span>
