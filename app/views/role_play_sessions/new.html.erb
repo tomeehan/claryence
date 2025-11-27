@@ -25,9 +25,18 @@
       </ul>
     </div>
 
-    <%= form_with url: role_play_role_play_sessions_path(role_play), method: :post, local: true, data: { controller: "loading-submit" } do |f| %>
+    <%= form_with url: role_play_role_play_sessions_path(role_play), method: :post, local: true do |f| %>
       <div class="flex gap-4">
-        <%= f.submit "Start Chat Session", class: "flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors cursor-pointer" %>
+        <button type="submit" data-controller="submit-loading" class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors cursor-pointer btn btn-primary">
+          <span data-submit-loading-target="label" class="inline-flex items-center gap-2">Start Chat Session</span>
+          <span data-submit-loading-target="spinner" class="hidden">
+            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+            </svg>
+            Starting…
+          </span>
+        </button>
         <%= link_to "Cancel", role_plays_path, class: "px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors" %>
       </div>
     <% end %>
