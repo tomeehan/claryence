@@ -467,32 +467,32 @@ export default function Show() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="fixed inset-0 flex flex-col bg-gray-50 overflow-hidden">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="shrink-0 bg-white border-b border-gray-200 px-4 py-3 md:px-6 md:py-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold text-gray-900">Clary</h1>
+          <h1 className="text-xl md:text-2xl font-semibold text-gray-900">Clary</h1>
           <a
             href="/role_plays"
             className={
-              `px-4 py-2 text-sm font-medium rounded-lg transition-colors ` +
+              `px-3 py-1.5 md:px-4 md:py-2 text-sm font-medium rounded-lg transition-colors ` +
               (wrappingUp
-                ? "bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                ? "bg-[#1a365d] text-white hover:bg-[#142849] focus:outline-none focus:ring-2 focus:ring-[#1a365d]"
                 : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50")
             }
           >
-            Exit Chat
+            Exit
           </a>
         </div>
       </div>
 
       {/* Main Content with Sidebar */}
-      <div className="flex-1 flex min-h-0">
-        {/* Left: Chat column (2/3) */}
-        <div className="flex flex-col w-2/3 border-r border-gray-200 min-h-0">
+      <div className="flex-1 flex min-h-0 overflow-hidden">
+        {/* Left: Chat column (2/3 on desktop, full width on mobile) */}
+        <div className="flex flex-col flex-1 md:flex-none w-full md:w-2/3 md:border-r border-gray-200 min-h-0 overflow-hidden">
           {/* Messages Container */}
-          <div className="flex-1 overflow-y-auto px-6 py-4">
-            <div className="max-w-3xl mx-auto space-y-6">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 md:px-6">
+            <div className="max-w-3xl mx-auto space-y-4">
               {messages.length === 0 && !isStreaming && (
                 <div className="text-center py-12 text-gray-500">
                   <p className="text-lg">
@@ -507,13 +507,13 @@ export default function Show() {
                   className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`max-w-2xl rounded-lg px-4 py-3 ${
+                    className={`max-w-[85%] md:max-w-2xl rounded-2xl px-4 py-2 md:py-3 ${
                       message.role === "user"
-                        ? "bg-blue-600 text-white"
+                        ? "bg-[#1a365d] text-white"
                         : "bg-white text-gray-900 border border-gray-200"
                     }`}
                   >
-                    <div className="whitespace-pre-wrap">{message.content}</div>
+                    <div className="whitespace-pre-wrap break-words text-[15px] md:text-base">{message.content}</div>
                   </div>
                 </div>
               ))}
@@ -521,13 +521,12 @@ export default function Show() {
               {/* Streaming message */}
               {isStreaming && streamingContent && !skipStreamingDisplay && (
                 <div className="flex justify-start">
-                  <div className="max-w-2xl rounded-lg px-4 py-3 bg-white text-gray-900 border border-gray-200">
-                    <div className="whitespace-pre-wrap">
+                  <div className="max-w-[85%] md:max-w-2xl rounded-2xl px-4 py-2 md:py-3 bg-white text-gray-900 border border-gray-200">
+                    <div className="whitespace-pre-wrap break-words text-[15px] md:text-base">
                       {streamingContent}
                     </div>
-                    <div className="mt-2 flex items-center text-gray-500 text-sm">
+                    <div className="mt-2 flex items-center text-gray-400 text-xs">
                       <div className="animate-pulse">●</div>
-                      <span className="ml-2">AI is typing...</span>
                     </div>
                   </div>
                 </div>
@@ -538,9 +537,9 @@ export default function Show() {
           </div>
 
           {/* Input Form */}
-          <div className="bg-white border-t border-gray-200 px-6 py-4">
+          <div className="shrink-0 bg-white border-t border-gray-200 px-4 py-3 md:px-6 md:py-4">
             <div className="max-w-3xl mx-auto">
-              <form onSubmit={handleSubmit} className="flex gap-3">
+              <form onSubmit={handleSubmit} className="flex gap-2 md:gap-3">
                 <textarea
                   ref={textareaRef}
                   rows={1}
@@ -552,22 +551,22 @@ export default function Show() {
                   onKeyDown={handleKeyDown}
                   disabled={isStreaming}
                   placeholder="Type your message..."
-                  className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed resize-none overflow-y-auto max-h-32 leading-6"
+                  className="flex-1 px-3 py-2 md:px-4 md:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a365d] disabled:bg-gray-100 disabled:cursor-not-allowed resize-none overflow-y-auto max-h-32 leading-6 text-base"
                 />
                 <button
                   type="submit"
                   disabled={!input.trim() || isStreaming}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                  className="px-4 py-2 md:px-6 md:py-3 bg-[#1a365d] text-white rounded-lg font-medium hover:bg-[#142849] focus:outline-none focus:ring-2 focus:ring-[#1a365d] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
                 >
-                  {isStreaming ? "Sending..." : "Send"}
+                  {isStreaming ? "..." : "Send"}
                 </button>
               </form>
             </div>
           </div>
         </div>
 
-        {/* Right: Sidebar (1/3) */}
-        <aside className="w-1/3 bg-gray-100 px-6 py-4 overflow-y-auto text-gray-900 min-h-0">
+        {/* Right: Sidebar (1/3, hidden on mobile) */}
+        <aside className="hidden md:block w-1/3 bg-gray-100 px-6 py-4 overflow-y-auto text-gray-900 min-h-0">
           <div className="space-y-4">
             <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
               Conversation Review
