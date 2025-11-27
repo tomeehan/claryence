@@ -5,12 +5,13 @@
     <%= link_to "← Back to Role Plays", role_plays_path, class: "text-blue-600 hover:text-blue-700" %>
   </div>
 
+  <% role_play = @role_play || RolePlay.find_by(id: params[:role_play_id]) %>
   <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-    <h1 class="text-3xl font-bold text-gray-900 mb-4"><%= @role_play.name %></h1>
+    <h1 class="text-3xl font-bold text-gray-900 mb-4"><%= role_play&.name || "Start Chat Session" %></h1>
 
-    <% if @role_play.description.present? %>
+    <% if role_play&.description.present? %>
       <div class="prose prose-sm mb-6 text-gray-600">
-        <%= @role_play.description %>
+        <%= role_play.description %>
       </div>
     <% end %>
 
@@ -19,12 +20,12 @@
       <ul class="text-sm text-gray-700 space-y-1">
         <li>• AI will role-play based on the scenario</li>
         <li>• Responses stream in real-time (like ChatGPT)</li>
-        <li>• Duration: approximately <%= @role_play.duration_minutes %> minutes</li>
+        <li>• Duration: approximately <%= role_play&.duration_minutes || "—" %> minutes</li>
         <li>• Practice as many times as you'd like</li>
       </ul>
     </div>
 
-    <%= form_with url: role_play_role_play_sessions_path(@role_play), method: :post, local: true do |f| %>
+    <%= form_with url: role_play_role_play_sessions_path(role_play), method: :post, local: true do |f| %>
       <div class="flex gap-4">
         <%= f.submit "Start Chat Session", class: "flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors cursor-pointer" %>
         <%= link_to "Cancel", role_plays_path, class: "px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors" %>

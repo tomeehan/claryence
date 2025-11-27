@@ -1,9 +1,17 @@
 class RolePlaySessionsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_role_play, only: [:new, :create]
+  before_action :set_role_play, only: [:new, :create, :index]
   before_action :set_session, only: [:show]
 
+  def index
+    @sessions = current_account.role_play_sessions
+      .where(role_play: @role_play)
+      .order(created_at: :desc)
+  end
+
   def new
+    # Ensure @role_play is present even if before_action is skipped for any reason
+    @role_play ||= RolePlay.find_by(id: params[:role_play_id])
     @session = RolePlaySession.new
   end
 
@@ -16,8 +24,8 @@ class RolePlaySessionsController < ApplicationController
     )
 
     if @session.save
-      # Generate initial AI greeting to start the role play
-      GenerateInitialMessageJob.perform_later(@session.id)
+      # Generate initial AI greeting synchronously so it's ready on first load
+      generate_initial_greeting(@session)
       redirect_to role_play_session_path(@session)
     else
       render :new, status: :unprocessable_entity
@@ -25,6 +33,10 @@ class RolePlaySessionsController < ApplicationController
   end
 
   def show
+    # Ensure the opening assistant message exists so page isn't blank
+    if !@session.chat_messages.exists?
+      generate_initial_greeting(@session)
+    end
     @messages = @session.chat_messages.ordered
 
     # Force rendering with Superglue
@@ -44,6 +56,9 @@ class RolePlaySessionsController < ApplicationController
   end
 
   def build_system_prompt
+    # Ensure we have a role_play context
+    @role_play ||= RolePlay.find_by(id: params[:role_play_id])
+
     # System prompt focused on realistic, in-character dialogue
     prompt = "".dup
 
@@ -63,7 +78,7 @@ class RolePlaySessionsController < ApplicationController
     end
 
     # Inject scenario-specific instructions for the character
-    if @role_play.llm_instructions.present?
+    if @role_play&.llm_instructions.present?
       prompt << "\n\nScenario & Character Notes:\n"
       prompt << @role_play.llm_instructions.to_plain_text
     end
@@ -92,5 +107,45 @@ class RolePlaySessionsController < ApplicationController
 
   def current_account_user
     current_user.account_users.find_by(account: current_account)
+  end
+
+  def generate_initial_greeting(session)
+    begin
+      messages = []
+      messages << { role: "system", content: session.system_prompt } if session.system_prompt.present?
+      messages << { role: "user", content: "Hello" }
+
+      openai = OpenaiService.new
+      response = openai.chat_completion(
+        messages,
+        model: "gpt-4o",
+        temperature: 0.9,
+        top_p: 0.9,
+        presence_penalty: 0.2,
+        frequency_penalty: 0.2,
+        max_tokens: 140
+      )
+
+      content = response[:content].presence || default_intro_text(session)
+      session.chat_messages.create!(
+        role: "assistant",
+        content: content,
+        account_id: session.account_id,
+        token_count: response[:tokens]
+      )
+    rescue => e
+      Rails.logger.error("Initial greeting generation failed: #{e.message}")
+      # Fallback: create a concise static intro so the page is never blank
+      session.chat_messages.create!(
+        role: "assistant",
+        content: default_intro_text(session),
+        account_id: session.account_id
+      )
+    end
+  end
+
+  def default_intro_text(session)
+    rp_name = session.role_play&.name || "this scenario"
+    "Hi — I’m ready to role‑play #{rp_name}. I’ll stay in character and keep replies short and natural. When you’re ready, say how you’d like to begin or what you want to cover."
   end
 end
