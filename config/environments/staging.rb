@@ -49,8 +49,9 @@ Rails.application.configure do
   # Replace the default in-process memory cache store with a durable alternative.
   config.cache_store = :solid_cache_store
 
-  # Replace the default in-process and non-durable queuing backend for Active Job.
-  config.active_job.queue_adapter = Jumpstart.config.queue_adapter
+  # Ensure background jobs run on staging (match production behavior)
+  # Sidekiq may not be running on staging; Solid Queue avoids missing worker issues.
+  config.active_job.queue_adapter = :solid_queue
   config.solid_queue.connects_to = {database: {writing: :queue}}
 
   # Ignore bad email addresses and do not raise email delivery errors.
