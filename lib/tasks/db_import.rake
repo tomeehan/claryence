@@ -55,7 +55,21 @@ module DbImport
     args += ["--verbose", "--clean", "--no-acl", "--no-owner", dump_path.to_s]
 
     puts "==> Running pg_restore"
-    run!("pg_restore #{args.shelljoin}", env)
+    unless run_pg_restore(args, env)
+      puts "!! Local pg_restore failed. Attempting Dockerized pg_restore (Postgres 16)."
+      unless docker_available?
+        abort <<~MSG
+          pg_restore failed and Docker is not available.
+          You likely need a newer PostgreSQL client.
+          Try: brew install postgresql@16 && export PATH=\"/opt/homebrew/opt/postgresql@16/bin:$PATH\" (on macOS)
+          Or install Docker and re-run the task.
+        MSG
+      end
+
+      unless run_docker_pg_restore(dump_path, cfg)
+        abort "Dockerized pg_restore also failed. See output above."
+      end
+    end
 
     puts "==> Done. Imported backup from #{app} into #{cfg[:database]}"
   ensure
@@ -114,6 +128,46 @@ module DbImport
     createdb_args += ["-U", cfg[:username]] if cfg[:username]
     createdb_args << cfg[:database]
     run("createdb #{createdb_args.shelljoin}", (cfg[:password] ? {"PGPASSWORD" => cfg[:password]} : {}))
+  end
+
+  def run_pg_restore(args, env)
+    cmd = "pg_restore #{args.shelljoin}"
+    puts "$ #{cmd}"
+    system(env, cmd)
+  end
+
+  def docker_available?
+    system("which docker >/dev/null 2>&1")
+  end
+
+  def run_docker_pg_restore(dump_path, cfg)
+    dump_basename = File.basename(dump_path.to_s)
+    # Mount tmp so container can read the downloaded dump
+    host_dir = Rails.root.join("tmp").to_s
+    pgpw = cfg[:password]
+    env = pgpw ? ["-e", "PGPASSWORD=#{pgpw}"] : []
+
+    host = cfg[:host]
+    # If host not specified or is localhost, use Docker's host gateway
+    if host.nil? || host == "localhost" || host == "127.0.0.1"
+      host = "host.docker.internal"
+    end
+
+    cmd = [
+      "docker", "run", "--rm",
+      *env,
+      "-v", "#{host_dir}:/tmp",
+      "postgres:16-alpine",
+      "pg_restore",
+      "-h", host
+    ]
+    cmd += ["-p", cfg[:port].to_s] if cfg[:port]
+    cmd += ["-U", cfg[:username]] if cfg[:username]
+    cmd += ["-d", cfg[:database]]
+    cmd += ["--verbose", "--clean", "--no-acl", "--no-owner", "/tmp/#{dump_basename}"]
+
+    puts "$ #{cmd.shelljoin}"
+    system(cmd.shelljoin)
   end
 
   def ensure_cli!(cmd)
