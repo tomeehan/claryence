@@ -1,3 +1,5 @@
+require 'shellwords'
+
 namespace :db do
   namespace :import do
     desc "Download latest Heroku production backup and restore into local primary DB (development)"
@@ -24,7 +26,8 @@ module DbImport
     FileUtils.mkdir_p(dump_path.dirname)
 
     puts "==> Capturing latest backup on Heroku (#{app})"
-    run!("heroku pg:backups:capture --app #{Shellwords.escape(app)} --wait")
+    run!("heroku pg:backups:capture --app #{Shellwords.escape(app)}")
+    wait_for_backup!(app)
 
     puts "==> Downloading latest backup to #{dump_path}"
     # Prefer explicit output path where supported; fallback to default filename
@@ -58,6 +61,30 @@ module DbImport
   ensure
     # Keep the dump for inspection; uncomment to auto-delete
     # FileUtils.rm_f(dump_path) if dump_path && File.exist?(dump_path)
+  end
+
+  def wait_for_backup!(app)
+    puts "==> Waiting for backup to complete on Heroku (#{app})"
+    started_at = Time.now
+    timeout = (ENV["HEROKU_BACKUP_TIMEOUT"] || 600).to_i # default 10 minutes
+    interval = (ENV["HEROKU_BACKUP_POLL_INTERVAL"] || 5).to_i
+
+    loop do
+      info_cmd = "heroku pg:backups:info --app #{Shellwords.escape(app)}"
+      output = `#{info_cmd} 2>&1`
+      if $?.success? && output.include?("Completed")
+        puts "==> Backup marked Completed"
+        return
+      end
+      if output =~ /(Failed|Error)/i
+        abort "Heroku backup failed or errored:\n#{output}"
+      end
+      if Time.now - started_at > timeout
+        puts "==> Timed out waiting for backup. Proceeding to download attempt."
+        return
+      end
+      sleep interval
+    end
   end
 
   def primary_db_config
@@ -106,4 +133,3 @@ module DbImport
     system(env, command)
   end
 end
-
