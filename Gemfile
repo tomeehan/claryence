@@ -45,7 +45,7 @@ gem "thruster", require: false
 gem "image_processing", "~> 1.12"
 
 # Track changes to models with PaperTrail [https://github.com/paper-trail-gem/paper_trail]
-gem "paper_trail", "~> 15.0"
+gem "paper_trail", "~> 17.0"
 
 # Markdown editor for admin interfaces [https://github.com/basecamp/lexxy]
 gem "lexxy", "~> 0.1"
