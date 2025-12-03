@@ -218,9 +218,8 @@ export default function Show() {
   const pendingAssistantMessageRef = useRef(null);
   const streamingContentRef = useRef("");
   const startedRef = useRef(false);
-  // Approx reading speed: 200 WPM ≈ 16.7 chars/sec
-  const READING_WPM = 200;
-  const CHARS_PER_SECOND = (READING_WPM * 5) / 60;
+  // Fixed reveal speed
+  const CHARS_PER_SECOND = 50;
 
   const setStreamBufferSync = (val) => {
     streamBufferRef.current = val;

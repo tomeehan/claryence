@@ -60,7 +60,7 @@ export default function Show() {
   const pendingAssistantMessageRef = useRef(null);
   const streamingContentRef = useRef("");
 
-  const CHARS_PER_SECOND = (200 * 5) / 60; // ≈ reading pace
+  const CHARS_PER_SECOND = 50; // fixed reveal speed
 
   const setStreamBufferSync = (val) => {
     streamBufferRef.current = val;
