@@ -4,3 +4,4 @@ resources :role_plays, only: [:index, :show] do
 end
 
 resources :role_play_sessions, only: [:show], path: "chat/sessions"
+resources :coaching_sessions, only: [:show], path: "chat/coach"

@@ -473,7 +473,7 @@ export default function Show() {
         <div className="flex items-center justify-between">
           <h1 className="text-xl md:text-2xl font-semibold text-gray-900">Clary</h1>
           <a
-            href="/role_plays"
+            href={`/chat/coach/${data.session_id}`}
             className={
               `px-3 py-1.5 md:px-4 md:py-2 text-sm font-medium rounded-lg transition-colors ` +
               (wrappingUp
@@ -487,9 +487,9 @@ export default function Show() {
       </div>
 
       {/* Main Content with Sidebar */}
-      <div className="flex-1 flex min-h-0 overflow-hidden">
+      <div className="flex-1 flex min-h-0">
         {/* Left: Chat column (2/3 on desktop, full width on mobile) */}
-        <div className="flex flex-col flex-1 md:flex-none w-full md:w-2/3 md:border-r border-gray-200 min-h-0 overflow-hidden">
+        <div className="flex flex-col flex-1 md:flex-none w-full md:w-2/3 md:border-r border-gray-200 min-h-0">
           {/* Messages Container */}
           <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 md:px-6">
             <div className="max-w-3xl mx-auto space-y-4">
@@ -513,7 +513,7 @@ export default function Show() {
                         : "bg-white text-gray-900 border border-gray-200"
                     }`}
                   >
-                    <div className="whitespace-pre-wrap break-words text-[15px] md:text-base">{message.content}</div>
+                    <div className="whitespace-pre-wrap break-words text-[15px] md:text-base leading-6">{message.content}</div>
                   </div>
                 </div>
               ))}
@@ -522,7 +522,7 @@ export default function Show() {
               {isStreaming && streamingContent && !skipStreamingDisplay && (
                 <div className="flex justify-start">
                   <div className="max-w-[85%] md:max-w-2xl rounded-2xl px-4 py-2 md:py-3 bg-white text-gray-900 border border-gray-200">
-                    <div className="whitespace-pre-wrap break-words text-[15px] md:text-base">
+                    <div className="whitespace-pre-wrap break-words text-[15px] md:text-base leading-6">
                       {streamingContent}
                     </div>
                     <div className="mt-2 flex items-center text-gray-400 text-xs">

@@ -2,6 +2,7 @@ class RolePlaySession < AccountRecord
   belongs_to :account_user
   belongs_to :role_play
   has_many :chat_messages, dependent: :destroy
+  has_many :coach_messages, dependent: :destroy
 
   validates :status, inclusion: {in: %w[active completed abandoned]}, allow_nil: true
 

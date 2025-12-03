@@ -9,4 +9,5 @@ class Account < ApplicationRecord
   # Role play chat associations
   has_many :role_play_sessions, dependent: :destroy
   has_many :chat_messages, dependent: :destroy
+  has_many :coach_messages, dependent: :destroy
 end

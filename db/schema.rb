@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_26_002000) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_02_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -129,6 +129,18 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_26_002000) do
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_chat_messages_on_account_id"
     t.index ["role_play_session_id"], name: "index_chat_messages_on_role_play_session_id"
+  end
+
+  create_table "coach_messages", force: :cascade do |t|
+    t.bigint "account_id", null: false
+    t.text "content", null: false
+    t.datetime "created_at", null: false
+    t.string "role", null: false
+    t.bigint "role_play_session_id", null: false
+    t.integer "token_count"
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_coach_messages_on_account_id"
+    t.index ["role_play_session_id"], name: "index_coach_messages_on_role_play_session_id"
   end
 
   create_table "connected_accounts", force: :cascade do |t|
@@ -504,6 +516,14 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_26_002000) do
     t.index ["key"], name: "index_solid_queue_semaphores_on_key", unique: true
   end
 
+  create_table "system_prompts", force: :cascade do |t|
+    t.text "content", null: false
+    t.datetime "created_at", null: false
+    t.string "key", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_system_prompts_on_key", unique: true
+  end
+
   create_table "users", force: :cascade do |t|
     t.datetime "accepted_privacy_at", precision: nil
     t.datetime "accepted_terms_at", precision: nil
@@ -566,6 +586,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_11_26_002000) do
   add_foreign_key "api_tokens", "users"
   add_foreign_key "chat_messages", "accounts"
   add_foreign_key "chat_messages", "role_play_sessions"
+  add_foreign_key "coach_messages", "accounts"
+  add_foreign_key "coach_messages", "role_play_sessions"
   add_foreign_key "pay_charges", "pay_customers", column: "customer_id"
   add_foreign_key "pay_payment_methods", "pay_customers", column: "customer_id"
   add_foreign_key "pay_subscriptions", "pay_customers", column: "customer_id"

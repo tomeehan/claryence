@@ -21,6 +21,7 @@ namespace :madmin, path: :admin do
   resources :account_invitations
   resources :role_plays
   resources :knowledges
+  resources :system_prompts
   # resources :plans
   # namespace :pay do
   #   resources :customers
