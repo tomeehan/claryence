@@ -3,7 +3,6 @@
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";
 
-@variant dark (&:where(.dark, .dark *));
 @variant hotwire-native (html.hotwire-native &);
 @variant not-hotwire-native (html:not(.hotwire-native) &);
 
@@ -14,10 +13,8 @@
   --color-primary: var(--bg-primary);
 }
 
-@import "./themes/dark.css" layer(theme);
 @import "./themes/juicy.css" layer(theme);
 @import "./themes/light.css" layer(theme);
-@import "./themes/jumpstart-dark.css" layer(theme);
 @import "./themes/jumpstart.css" layer(theme);
 
 @import "./components/base.css" layer(components);

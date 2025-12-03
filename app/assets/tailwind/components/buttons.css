@@ -332,35 +332,35 @@ button[disabled]        .when-enabled { display: none; }
   }
 }
 
-.btn-dark {
-  background: var(--bg-dark);
-  color: var(--text-on-dark);
-  border: 1px solid var(--bg-dark);
+.btn-inverse {
+  background: var(--bg-inverse);
+  color: var(--text-on-inverse);
+  border: 1px solid var(--bg-inverse);
 
   &:hover {
-    background: var(--bg-dark-hover);
-    color: var(--text-on-dark);
-    border: 1px solid var(--bg-dark-hover);
+    background: var(--bg-inverse-hover);
+    color: var(--text-on-inverse);
+    border: 1px solid var(--bg-inverse-hover);
   }
 
   &:disabled:hover {
-    background: var(--bg-dark);
-    color: var(--text-on-dark);
+    background: var(--bg-inverse);
+    color: var(--text-on-inverse);
   }
 
   &:focus-visible {
-    outline: 2px solid var(--border-dark-focus);
+    outline: 2px solid var(--border-inverse-focus);
     outline-offset: 2px;
   }
 
   &.btn-outline {
     background: transparent;
-    color: var(--text-on-dark-outline);
-    border: 1px solid var(--border-dark);
+    color: var(--text-on-inverse-outline);
+    border: 1px solid var(--border-inverse);
 
     &:hover {
-      background: var(--bg-dark-hover);
-      color: var(--text-on-dark);
+      background: var(--bg-inverse-hover);
+      color: var(--text-on-inverse);
     }
   }
 }

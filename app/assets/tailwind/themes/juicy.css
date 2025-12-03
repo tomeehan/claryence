@@ -62,14 +62,14 @@
   --text-on-light-outline: var(--color-blue-900);
   --border-light: var(--color-slate-200);
 
-  /*Dark*/
-  --bg-dark: var(--color-indigo-950);
-  --bg-dark-secondary: var(--color-indigo-500);
-  --bg-dark-hover: var(--color-indigo-900);
-  --text-on-dark: var(--color-indigo-50);
-  --text-on-dark-outline: var(--color-indigo-900);
-  --border-dark: var(--color-indigo-700);
-  --border-dark-focus: var(--color-indigo-500);
+  /*Inverse*/
+  --bg-inverse: var(--color-indigo-950);
+  --bg-inverse-secondary: var(--color-indigo-500);
+  --bg-inverse-hover: var(--color-indigo-900);
+  --text-on-inverse: var(--color-indigo-50);
+  --text-on-inverse-outline: var(--color-indigo-900);
+  --border-inverse: var(--color-indigo-700);
+  --border-inverse-focus: var(--color-indigo-500);
 
   /*Disabled*/
   --bg-disabled: var(--color-slate-200);

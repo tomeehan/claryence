@@ -441,10 +441,7 @@ trix-editor .attachment__metadata {
 
 
 /* Jumpstart customizations */
-html.dark .trix-content pre {
-  background: var(--color-gray-800);
-  color: var(--text-white);
-}
+/* Alternate theme removed: no additional overrides */
 
 /* Remove borders on buttons */
 trix-toolbar .trix-button-row .trix-button-group {

@@ -67,9 +67,7 @@ export default class extends Controller {
     }
   }
 
-  get theme() {
-    return document.documentElement.classList.contains("dark") ? "dark" : "light";
-  }
+  get theme() { return "light" }
 
   addScript(src) {
     return new Promise((resolve, reject) => {

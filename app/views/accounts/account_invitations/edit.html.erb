@@ -4,7 +4,7 @@
   </div>
 
   <div class="w-full lg:w-3/4 lg:p-4">
-    <div class="p-4 bg-white border border-gray-200 dark:bg-gray-900 dark:border-gray-700 rounded-lg lg:p-10">
+    <div class="p-4 bg-white border border-gray-200 rounded-lg lg:p-10">
       <div class="flex items-center gap-4">
         <%= account_avatar @account %>
         <h1 class="h3">
@@ -18,7 +18,7 @@
         </h1>
       </div>
 
-      <p class="my-4 text-gray-700 dark:text-gray-200"><%= t(".description") %></p>
+      <p class="my-4 text-gray-700"><%= t(".description") %></p>
 
       <%= form_with(model: [@account, @account_invitation]) do |form| %>
         <%= render "error_messages", resource: form.object %>

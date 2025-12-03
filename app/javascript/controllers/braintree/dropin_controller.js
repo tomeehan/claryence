@@ -56,17 +56,5 @@ export default class extends Controller {
     this.formTarget.appendChild(hiddenInput)
   }
 
-  get cardStyles() {
-    let darkMode = document.documentElement.classList.contains("dark");
-    if(darkMode) {
-      return {
-        '.number': {
-          color: 'white'
-        },
-        '.expirationDate': {
-          color: 'white'
-        }
-      }
-    }
-  }
+  get cardStyles() { return undefined }
 }

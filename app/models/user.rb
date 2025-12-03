@@ -7,7 +7,7 @@ class User < ApplicationRecord
   include Mentions
   include Notifiable
   include Searchable
-  include Theme
+  # Theme preferences removed
 
   has_one_attached :avatar
   has_person_name

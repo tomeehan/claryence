@@ -74,14 +74,14 @@
   --text-on-light-outline: var(--color-gray-800);
   --border-light: var(--color-gray-300);
 
-  /*Dark*/
-  --bg-dark: var(--color-gray-800);
-  --bg-dark-secondary: var(--color-gray-500);
-  --bg-dark-hover: var(--color-gray-700);
-  --text-on-dark: var(--color-white);
-  --text-on-dark-outline: var(--color-gray-800);
-  --border-dark: var(--color-gray-700);
-  --border-dark-focus: var(--color-gray-500);
+  /*Inverse*/
+  --bg-inverse: var(--color-gray-800);
+  --bg-inverse-secondary: var(--color-gray-500);
+  --bg-inverse-hover: var(--color-gray-700);
+  --text-on-inverse: var(--color-white);
+  --text-on-inverse-outline: var(--color-gray-800);
+  --border-inverse: var(--color-gray-700);
+  --border-inverse-focus: var(--color-gray-500);
 
   /*Disabled*/
   --bg-disabled: var(--color-gray-200);

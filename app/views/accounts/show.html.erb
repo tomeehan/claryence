@@ -4,7 +4,7 @@
   </div>
 
   <div class="w-full lg:w-3/4 lg:p-4">
-    <div class="p-4 bg-white border border-gray-200 dark:bg-gray-900 dark:border-gray-700 rounded-lg lg:p-10">
+    <div class="p-4 bg-white border border-gray-200 rounded-lg lg:p-10">
       <div class="sm:flex items-center justify-between mb-5">
         <div class="flex items-center gap-4">
           <%= account_avatar @account %>
@@ -28,9 +28,9 @@
         <table class="w-full">
           <thead>
             <tr>
-              <th class="p-3 text-xs text-left text-gray-600 dark:text-gray-300 uppercase"><%= AccountUser.human_attribute_name(:user) %></th>
-              <th class="p-3 text-xs text-left text-gray-600 dark:text-gray-300 uppercase"><%= AccountUser.human_attribute_name(:roles) %></th>
-              <th class="p-3 text-xs text-left text-gray-600 dark:text-gray-300 uppercase"></th>
+              <th class="p-3 text-xs text-left text-gray-600 uppercase"><%= AccountUser.human_attribute_name(:user) %></th>
+              <th class="p-3 text-xs text-left text-gray-600 uppercase"><%= AccountUser.human_attribute_name(:roles) %></th>
+              <th class="p-3 text-xs text-left text-gray-600 uppercase"></th>
               <th></th>
             </tr>
           </thead>
@@ -38,13 +38,13 @@
           <tbody>
             <% @account.account_users.includes(:user).each do |account_user| %>
               <% user = account_user.user %>
-              <tr class="border-t border-gray-100 dark:border-gray-800">
+              <tr class="border-t border-gray-100">
                 <td class="p-3 font-medium">
                   <%= image_tag avatar_url_for(user), class: "hidden lg:inline-block size-6 rounded-full mr-2" %>
                   <%= user.name || user.email %>
                 </td>
-                <td class="p-3 text-sm font-medium text-gray-700 dark:text-gray-300"><%= account_user_roles(@account, account_user).join(", ") %></td>
-                <td class="p-3 text-sm font-medium text-gray-700 dark:text-gray-300">
+                <td class="p-3 text-sm font-medium text-gray-700"><%= account_user_roles(@account, account_user).join(", ") %></td>
+                <td class="p-3 text-sm font-medium text-gray-700">
                   <% if user.otp_required_for_login? %>
                     <div class="flex gap-1 items-center">
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 inline-block">
@@ -60,7 +60,7 @@
 
             <%# Invitations %>
             <% @account.account_invitations.each do |account_invitation| %>
-              <tr class="border-t border-gray-100 dark:border-gray-800">
+              <tr class="border-t border-gray-100">
                 <td class="p-3 font-medium">
                   <%= image_tag avatar_url_for(account_invitation), class: "hidden lg:inline-block h-6 rounded-full mr-2" %>
                   <%= account_invitation.name %>

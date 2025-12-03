@@ -42,8 +42,8 @@
 }
 
 .pill-tertiary {
-  background: var(--bg-dark-secondary);
-  color: var(--text-on-dark);
+  background: var(--bg-inverse-secondary);
+  color: var(--text-on-inverse);
 
   &.pill-outline {
     background: transparent;

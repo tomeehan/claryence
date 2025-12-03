@@ -440,10 +440,7 @@ en:
           enable: "Enable two-factor authentication"
           disable: "Disable two-factor authentication"
 
-  themes:
-    system: "Sync with system"
-    light: "Light"
-    dark: "Dark"
+  # themes: removed (no dark mode support)
 
   users:
     agreements:

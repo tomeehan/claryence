@@ -29,9 +29,9 @@ function insertConfirmModal(message, element, button) {
   let content = `
     <dialog id="${id}" class="modal rounded-lg max-w-md w-full backdrop:backdrop-blur-xs backdrop:bg-black/50">
       <form method="dialog">
-        <div class="bg-white mx-auto rounded-sm shadow-sm p-6 max-w-md dark:bg-gray-900">
+        <div class="bg-white mx-auto rounded-sm shadow-sm p-6 max-w-md">
           <h5 class="text-lg">${message}</h5>
-          <p class="mt-2 text-sm text-gray-700 dark:text-gray-200">${description}</p>
+          <p class="mt-2 text-sm text-gray-700">${description}</p>
 
           ${confirmInput}
 

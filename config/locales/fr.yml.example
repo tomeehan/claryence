@@ -433,10 +433,7 @@ fr:
           enable: "Activer l'authentification à deux facteurs"
           disable: "Désactiver l'authentification à deux facteurs"
 
-  themes:
-    system: "Synchroniser avec le système"
-    light: "Clair"
-    dark: "Sombre"
+  # themes: supprimés (pas de mode sombre)
 
   users:
     agreements:

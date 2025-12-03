@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html class="docs-layout <%= class_names("h-full antialiased", "dark": current_user&.dark_theme?) %>" lang="<%= I18n.locale %>">
+<html class="docs-layout <%= class_names("h-full antialiased") %>" lang="<%= I18n.locale %>">
   <head>
     <%= render "head" %>
 
     <script>
       document.addEventListener("turbo:load", function() {
         const themeSelector = document.querySelector('#theme-select');
-        const currentTheme = ['jumpstart', 'dark', 'juicy'].find(cls => document.documentElement.classList.contains(cls)) || null;
+        const currentTheme = ['jumpstart', 'juicy'].find(cls => document.documentElement.classList.contains(cls)) || null;
 
         for (const option of themeSelector.options) {
           option.selected = (option.value === currentTheme) || (option.value === 'light' && currentTheme === null);
         }
 
         themeSelector.addEventListener('change', function() {
-          document.documentElement.classList.remove('jumpstart', 'dark', 'juicy');
+          document.documentElement.classList.remove('jumpstart', 'juicy');
           document.documentElement.classList.add(this.value);
         });
       });

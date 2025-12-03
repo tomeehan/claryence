@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 
 <html
-  class="<%= class_names(dark: current_user&.dark_theme?, "hotwire-native": hotwire_native_app?) %>"
+  class="<%= class_names("hotwire-native": hotwire_native_app?) %>"
   lang="<%= I18n.locale %>"
 >
   <head><%= render "head" %></head>
 
-  <body
-    data-controller="theme"
-    data-theme-preference-value="<%= current_user&.theme %>"
-  >
+  <body>
     <header>
       <%= impersonation_banner %>
       <%= render "flash" %>
