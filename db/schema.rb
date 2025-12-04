@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_03_000003) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_04_131705) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -174,8 +174,8 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_03_000003) do
 
   create_table "knowledges", force: :cascade do |t|
     t.boolean "active", default: true, null: false
-    t.text "content"
     t.datetime "created_at", null: false
+    t.string "summary"
     t.datetime "updated_at", null: false
     t.index ["active"], name: "index_knowledges_on_active"
   end

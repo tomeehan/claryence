@@ -35,7 +35,7 @@ namespace :db do
     # Creates and downloads a Heroku database back-up.
     # Requires the Heroku toolchain to be installed and setup.
     def capture_and_download_heroku_db(app)
-      # `heroku pg:backups:capture --app #{app}`
+      `heroku pg:backups:capture --app #{app}`
       `heroku pg:backups:download --app #{app}`
     end
 
@@ -47,7 +47,18 @@ namespace :db do
 
     # Imports the downloaded database dump into your local development database.
     def import_locally(file)
-      `pg_restore --verbose --clean --no-acl --no-owner -h localhost -U #{user} -d claryence_development #{file}`
+      pg_restore = pg_restore_path
+      `#{pg_restore} --verbose --clean --no-acl --no-owner -h localhost -U #{user} -d claryence_development #{file}`
+    end
+
+    # Returns the path to pg_restore, preferring the newest installed version
+    def pg_restore_path
+      # Check for PostgreSQL 17 first (supports dump format 1.16)
+      pg17_path = "/opt/homebrew/opt/postgresql@17/bin/pg_restore"
+      return pg17_path if File.exist?(pg17_path)
+
+      # Fall back to default pg_restore
+      "pg_restore"
     end
 
     # Runs migrations against the just imported database dump from Heroku.

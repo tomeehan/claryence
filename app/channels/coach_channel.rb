@@ -75,8 +75,8 @@ class CoachChannel < ApplicationCable::Channel
   private
 
   def build_messages(session)
-    # Knowledge corpus
-    knowledge = Knowledge.active.order(created_at: :desc).pluck(:content).compact.reject(&:blank?).join("\n\n")
+    # Knowledge corpus (rich text or legacy), joined as plain text
+    knowledge = Knowledge.active.order(created_at: :desc).map { |k| k.content_plain_text }.reject(&:blank?).join("\n\n")
 
     # Transcript of the role play (full)
     transcript = session.chat_messages.ordered.map do |m|

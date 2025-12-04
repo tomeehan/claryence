@@ -1,7 +1,8 @@
 class KnowledgeResource < Madmin::Resource
   # Attributes
   attribute :id, form: false
-  attribute :content, :text_area, index: true
+  attribute :summary, index: true, form: false
+  attribute :content, :rich_text, index: false
   attribute :active, index: true
   attribute :created_at, index: false, form: false, show: false
   attribute :updated_at, form: false, show: false

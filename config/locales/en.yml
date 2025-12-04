@@ -533,6 +533,8 @@ en:
         created_at: "Created"
       account:
         name_on_card: "Name on Card"
+      knowledge:
+        summary: "Summary (AI generated)"
       user:
         theme: "Color theme"
 

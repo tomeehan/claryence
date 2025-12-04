@@ -1,6 +1,6 @@
 class ConversationReviewService
   def self.knowledge
-    Knowledge.active.order(created_at: :desc).pluck(:content).compact.reject(&:blank?).join("\n\n")
+    Knowledge.active.order(created_at: :desc).map { |k| k.content_plain_text }.reject(&:blank?).join("\n\n")
   end
 
   def self.system_prompt
