@@ -11,8 +11,13 @@ class SystemPrompt < ApplicationRecord
   # Fetch the prompt by key, falling back to the block value if not present
   def self.fetch(key)
     record = find_by(key: key)
-    return (record.content.respond_to?(:to_plain_text) ? record.content.to_plain_text : record[:content].to_s)
-      if record.present? && (record.content.present? || record[:content].present?)
+    if record.present?
+      if record.content.present? && record.content.respond_to?(:to_plain_text)
+        return record.content.to_plain_text
+      elsif record[:content].present?
+        return record[:content].to_s
+      end
+    end
     block_given? ? yield : nil
   end
 end
