@@ -84,21 +84,8 @@ class CoachChannel < ApplicationCable::Channel
       "#{who}: #{m.content}"
     end.join("\n\n")
 
-    # Coaching system prompt
-    system_prompt = <<~SYS.strip
-      You are Clary, an expert leadership coach.
-      You are talking to the human Manager who just completed a role play.
-      Your job is to help them reflect and improve using concise, practical coaching.
-
-      Use the provided Knowledge when it clearly applies; otherwise, do not force it.
-      Always ground your coaching with 1–2 very short, concrete examples from the transcript.
-      - Quote brief phrases (5–12 words) or paraphrase precisely.
-      - Attribute examples to "Manager" or "Role Play AI" so it’s clear who said what.
-      - Do not paste long passages; keep quotes short.
-
-      Keep a supportive, direct tone. Prefer short paragraphs or brief lists when appropriate.
-      Do not role-play the other character; you are the coach speaking to the Manager.
-    SYS
+    # Coaching system prompt from database
+    system_prompt = SystemPrompt.find_by(key: "clary_soul")&.content&.to_plain_text || "You are Clary, an expert leadership coach."
 
     # Coach chat history
     coach_history = session.coach_messages.ordered.map { |m| { role: m.role, content: m.content } }
