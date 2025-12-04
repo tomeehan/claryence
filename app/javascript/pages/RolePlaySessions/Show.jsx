@@ -531,10 +531,10 @@ export default function Show() {
           <a
             href={`/chat/coach/${data.session_id}`}
             className={
-              `px-3 py-1.5 md:px-4 md:py-2 text-sm font-medium rounded-lg transition-colors ` +
+              `px-3 py-1.5 md:px-4 md:py-2 text-sm font-medium rounded-lg sm:rounded-full transition-colors focus:outline-none focus-visible:ring-2 ` +
               (wrappingUp
-                ? "bg-[#1a365d] text-white hover:bg-[#142849] focus:outline-none focus:ring-2 focus:ring-[#1a365d]"
-                : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50")
+                ? "bg-[#1a365d] text-white hover:bg-[#142849] focus-visible:ring-[#1a365d]/50"
+                : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus-visible:ring-gray-300/60")
             }
           >
             Exit
@@ -642,7 +642,7 @@ export default function Show() {
                 <button
                   type="submit"
                   disabled={!input.trim() || isStreaming}
-                  className="px-4 py-2 md:px-6 md:py-3 bg-[#1a365d] text-white rounded-lg font-medium hover:bg-[#142849] focus:outline-none focus:ring-2 focus:ring-[#1a365d] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                  className="px-5 py-2.5 md:px-6 md:py-3 bg-[#1a365d] text-white rounded-lg sm:rounded-full font-medium hover:bg-[#142849] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a365d]/50 disabled:bg-gray-300 disabled:text-white/70 disabled:cursor-not-allowed transition-colors"
                 >
                   {isStreaming ? "..." : "Send"}
                 </button>
