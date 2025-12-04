@@ -208,6 +208,7 @@ export default function Show() {
   const [review, setReview] = useState("");
   const [wrappingUp, setWrappingUp] = useState(false);
   const messagesEndRef = useRef(null);
+  const scrollContainerRef = useRef(null);
   const channelRef = useRef(null);
   const textareaRef = useRef(null);
   const revealTimerRef = useRef(null);
@@ -218,6 +219,13 @@ export default function Show() {
   const pendingAssistantMessageRef = useRef(null);
   const streamingContentRef = useRef("");
   const startedRef = useRef(false);
+  const autoScrollRef = useRef(true);
+  const [showJumpLatest, setShowJumpLatest] = useState(false);
+  const LOCK_DISTANCE = 4; // px from bottom to (re)lock
+  const BREAK_DISTANCE = 80; // px away from bottom to unlock
+  const programmaticScrollRef = useRef(false);
+  const userScrollUpRef = useRef(false);
+  const touchStartYRef = useRef(null);
   // Fixed reveal speed
   const CHARS_PER_SECOND = 50;
 
@@ -272,6 +280,9 @@ export default function Show() {
               setPendingAssistantMessage(null);
               // Indicate review is queued
               setReview("Reviewing…");
+              // Lock to bottom like WhatsApp when a new response starts typing
+              autoScrollRef.current = true;
+              requestAnimationFrame(() => forceScrollToBottom());
               break;
 
             case "assistant_chunk":
@@ -343,10 +354,53 @@ export default function Show() {
     };
   }, [data.session_id]);
 
+  const forceScrollToBottom = () => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    programmaticScrollRef.current = true;
+    el.scrollTop = el.scrollHeight;
+    requestAnimationFrame(() => { programmaticScrollRef.current = false; });
+    autoScrollRef.current = true;
+    setShowJumpLatest(false);
+  };
+
   useEffect(() => {
-    // Auto-scroll to bottom
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Auto-scroll only if user is at bottom (auto-scroll enabled)
+    if (autoScrollRef.current) {
+      forceScrollToBottom();
+    } else {
+      // New content arrived while user scrolled up
+      setShowJumpLatest(true);
+    }
   }, [messages, streamingContent]);
+
+  const handleScroll = () => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const distanceFromBottom = el.scrollHeight - el.clientHeight - el.scrollTop;
+    const atBottom = distanceFromBottom <= LOCK_DISTANCE;
+    if (atBottom) {
+      autoScrollRef.current = true;
+      setShowJumpLatest(false);
+    } else if (!programmaticScrollRef.current) {
+      if (userScrollUpRef.current || distanceFromBottom > BREAK_DISTANCE) {
+        autoScrollRef.current = false;
+        setShowJumpLatest(true);
+      }
+    }
+    // reset user intent flag after handling
+    userScrollUpRef.current = false;
+  };
+
+  const scrollToBottom = () => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    programmaticScrollRef.current = true;
+    el.scrollTop = el.scrollHeight;
+    requestAnimationFrame(() => { programmaticScrollRef.current = false; });
+    autoScrollRef.current = true;
+    setShowJumpLatest(false);
+  };
 
   // Reveal timer to show assistant text at reading speed
   useEffect(() => {
@@ -450,6 +504,9 @@ export default function Show() {
       setInput("");
       // Shrink textarea after clearing
       requestAnimationFrame(() => autoResize());
+      // Re-lock to bottom on send (WhatsApp behavior)
+      autoScrollRef.current = true;
+      requestAnimationFrame(() => scrollToBottom());
     }
   };
 
@@ -487,10 +544,29 @@ export default function Show() {
 
       {/* Main Content with Sidebar */}
       <div className="flex-1 flex min-h-0">
-        {/* Left: Chat column (2/3 on desktop, full width on mobile) */}
-        <div className="flex flex-col flex-1 md:flex-none w-full md:w-2/3 md:border-r border-gray-200 min-h-0">
+        {/* Left: Chat column. 2/3 when admin sidebar visible, full width otherwise */}
+        <div
+          className={
+            `flex flex-col flex-1 md:flex-none w-full ` +
+            (data.is_admin ? `md:w-2/3 md:border-r` : `md:w-full`) +
+            ` border-gray-200 min-h-0`
+          }
+        >
           {/* Messages Container */}
-          <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 md:px-6">
+          <div
+            ref={scrollContainerRef}
+            onScroll={handleScroll}
+            onWheel={(e) => { if (e.deltaY < 0) userScrollUpRef.current = true; }}
+            onTouchStart={(e) => { touchStartYRef.current = e.touches?.[0]?.clientY ?? null; }}
+            onTouchMove={(e) => {
+              const y = e.touches?.[0]?.clientY;
+              if (touchStartYRef.current != null && y != null) {
+                // If finger moves down (increasing Y), content tends to scroll up
+                if (y - touchStartYRef.current > 4) userScrollUpRef.current = true;
+              }
+            }}
+            className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 md:px-6"
+          >
             <div className="max-w-3xl mx-auto space-y-4">
               {messages.length === 0 && !isStreaming && (
                 <div className="text-center py-12 text-gray-500">
@@ -531,6 +607,17 @@ export default function Show() {
                 </div>
               )}
 
+              {showJumpLatest && (
+                <div className="sticky bottom-2 flex justify-center pointer-events-none">
+                  <button
+                    type="button"
+                    onClick={scrollToBottom}
+                    className="pointer-events-auto px-3 py-1.5 text-sm rounded-full bg-gray-800 text-white shadow hover:bg-gray-700"
+                  >
+                    Jump to latest
+                  </button>
+                </div>
+              )}
               <div ref={messagesEndRef} />
             </div>
           </div>
@@ -564,15 +651,17 @@ export default function Show() {
           </div>
         </div>
 
-        {/* Right: Sidebar (1/3, hidden on mobile) */}
-        <aside className="hidden md:block w-1/3 bg-gray-100 px-6 py-4 overflow-y-auto text-gray-900 min-h-0">
-          <div className="space-y-4">
-            <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
-              Conversation Review
-            </h2>
-            <ReviewPanel review={review} />
-          </div>
-        </aside>
+        {/* Right: Sidebar only for admins */}
+        {data.is_admin && (
+          <aside className="hidden md:block w-1/3 bg-gray-100 px-6 py-4 overflow-y-auto text-gray-900 min-h-0">
+            <div className="space-y-4">
+              <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                Conversation Review
+              </h2>
+              <ReviewPanel review={review} />
+            </div>
+          </aside>
+        )}
       </div>
     </div>
   );

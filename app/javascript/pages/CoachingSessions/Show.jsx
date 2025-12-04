@@ -49,6 +49,7 @@ export default function Show() {
   const [skipStreamingDisplay, setSkipStreamingDisplay] = useState(false);
   const [pendingAssistantMessage, setPendingAssistantMessage] = useState(null);
   const messagesEndRef = useRef(null);
+  const scrollContainerRef = useRef(null);
   const channelRef = useRef(null);
   const textareaRef = useRef(null);
   const revealTimerRef = useRef(null);
@@ -86,6 +87,12 @@ export default function Show() {
               setStreamingContent("");
               setStreamBufferSync("");
               setPendingAssistantMessage(null);
+              autoScrollRef.current = true;
+              requestAnimationFrame(() => {
+                programmaticScrollRef.current = true;
+                messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+                setTimeout(() => { programmaticScrollRef.current = false; }, 0);
+              });
               break;
             case "assistant_chunk":
               setStreamBufferSync((streamBufferRef.current || "") + (payload.content || ""));
@@ -111,9 +118,44 @@ export default function Show() {
     return () => channel.unsubscribe();
   }, [data.session_id]);
 
+  const autoScrollRef = useRef(true);
+  const [showJumpLatest, setShowJumpLatest] = useState(false);
+  const LOCK_DISTANCE = 4;
+  const BREAK_DISTANCE = 80;
+  const programmaticScrollRef = useRef(false);
+  const userScrollUpRef = useRef(false);
+  const touchStartYRef = useRef(null);
+
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (autoScrollRef.current) {
+      const el = scrollContainerRef.current;
+      if (el) {
+        programmaticScrollRef.current = true;
+        el.scrollTop = el.scrollHeight;
+        requestAnimationFrame(() => { programmaticScrollRef.current = false; });
+      }
+    } else {
+      setShowJumpLatest(true);
+    }
   }, [messages, streamingContent]);
+
+  const lastScrollTopRef = useRef(0);
+  const handleScroll = () => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const distanceFromBottom = el.scrollHeight - el.clientHeight - el.scrollTop;
+    const atBottom = distanceFromBottom <= LOCK_DISTANCE;
+    if (atBottom) {
+      autoScrollRef.current = true;
+      setShowJumpLatest(false);
+    } else if (!programmaticScrollRef.current) {
+      if (userScrollUpRef.current || distanceFromBottom > BREAK_DISTANCE) {
+        autoScrollRef.current = false;
+        setShowJumpLatest(true);
+      }
+    }
+    userScrollUpRef.current = false;
+  };
 
   useEffect(() => {
     const startTimer = () => {
@@ -160,6 +202,12 @@ export default function Show() {
       channelRef.current.perform("send_message", { content: input });
       setInput("");
       requestAnimationFrame(() => autoResize());
+      autoScrollRef.current = true;
+      requestAnimationFrame(() => {
+        programmaticScrollRef.current = true;
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        setTimeout(() => { programmaticScrollRef.current = false; }, 0);
+      });
     }
   };
 
@@ -177,7 +225,19 @@ export default function Show() {
 
       <div className="flex-1 flex min-h-0">
         <div className="flex flex-col w-full min-h-0">
-          <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 md:px-6">
+          <div
+            ref={scrollContainerRef}
+            onScroll={handleScroll}
+            onWheel={(e) => { if (e.deltaY < 0) userScrollUpRef.current = true; }}
+            onTouchStart={(e) => { touchStartYRef.current = e.touches?.[0]?.clientY ?? null; }}
+            onTouchMove={(e) => {
+              const y = e.touches?.[0]?.clientY;
+              if (touchStartYRef.current != null && y != null) {
+                if (y - touchStartYRef.current > 4) userScrollUpRef.current = true;
+              }
+            }}
+            className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 md:px-6"
+          >
             <div className="max-w-3xl mx-auto space-y-4">
               {messages.map((message) => (
                 <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
@@ -198,6 +258,23 @@ export default function Show() {
                 </div>
               )}
 
+              {showJumpLatest && (
+                <div className="sticky bottom-2 flex justify-center pointer-events-none">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      programmaticScrollRef.current = true;
+                      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+                      setTimeout(() => { programmaticScrollRef.current = false; }, 0);
+                      autoScrollRef.current = true;
+                      setShowJumpLatest(false);
+                    }}
+            className="pointer-events-auto px-3 py-1.5 text-sm rounded-full bg-gray-800 text-white shadow hover:bg-gray-700"
+                  >
+                    Jump to latest
+                  </button>
+                </div>
+              )}
               <div ref={messagesEndRef} />
             </div>
           </div>

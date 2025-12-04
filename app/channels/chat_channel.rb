@@ -47,8 +47,8 @@ class ChatChannel < ApplicationCable::Channel
       }
     })
 
-    # Trigger a quick conversation review immediately so feedback starts streaming
-    ConversationReviewJob.perform_later(session.id)
+    # Trigger a quick conversation review only for admins
+    ConversationReviewJob.perform_later(session.id) if current_user.admin?
 
     # Get conversation history
     messages = session.chat_messages.ordered.map do |msg|
@@ -105,8 +105,8 @@ class ChatChannel < ApplicationCable::Channel
         }
       })
 
-      # Trigger updated review after assistant reply (final pass)
-      ConversationReviewJob.perform_later(session.id)
+      # Trigger updated review after assistant reply (final pass) for admins only
+      ConversationReviewJob.perform_later(session.id) if current_user.admin?
     rescue => e
       Rails.logger.error("OpenAI Error: #{e.message}")
       ChatChannel.broadcast_to(session, {
@@ -141,7 +141,7 @@ class ChatChannel < ApplicationCable::Channel
         top_p: 0.9,
         presence_penalty: 0.2,
         frequency_penalty: 0.2,
-        max_tokens: 140
+        max_tokens: 280
       ) do |chunk|
         ai_content += chunk
         ChatChannel.broadcast_to(session, { type: "assistant_chunk", content: chunk })
@@ -163,7 +163,7 @@ class ChatChannel < ApplicationCable::Channel
         }
       })
 
-      ConversationReviewJob.perform_later(session.id)
+      ConversationReviewJob.perform_later(session.id) if current_user.admin?
     rescue => e
       Rails.logger.error("OpenAI Error (start_conversation): #{e.message}")
       ChatChannel.broadcast_to(session, {
