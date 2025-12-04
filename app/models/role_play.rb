@@ -7,14 +7,8 @@ class RolePlay < ApplicationRecord
   has_rich_text :llm_instructions
   has_rich_text :recommended_for
 
-  # Category enum
-  enum :category, {
-    communication: 0,
-    team_management: 1,
-    conflict_resolution: 2,
-    performance_management: 3,
-    leadership_development: 4
-  }
+  # Category relation
+  belongs_to :category
 
   # Validations
   validates :name, presence: true, uniqueness: true
@@ -30,5 +24,15 @@ class RolePlay < ApplicationRecord
 
   # Scopes
   scope :active, -> { where(active: true) }
-  scope :by_category, ->(category) { where(category: category) }
+  scope :by_category, ->(cat) do
+    if cat.is_a?(Category)
+      where(category_id: cat.id)
+    elsif cat.is_a?(Integer)
+      where(category_id: cat)
+    elsif cat.respond_to?(:to_s)
+      joins(:category).where(categories: { name: cat.to_s })
+    else
+      all
+    end
+  end
 end

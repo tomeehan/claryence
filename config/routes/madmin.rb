@@ -20,6 +20,7 @@ namespace :madmin, path: :admin do
   resources :account_users
   resources :account_invitations
   resources :role_plays
+  resources :categories
   resources :knowledges
   resources :system_prompts
   # resources :plans

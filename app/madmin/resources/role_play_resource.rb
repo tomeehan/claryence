@@ -1,11 +1,6 @@
 class RolePlayResource < Madmin::Resource
   # Scopes
   scope :active
-  scope :communication
-  scope :team_management
-  scope :conflict_resolution
-  scope :performance_management
-  scope :leadership_development
 
   # Attributes
   attribute :id, form: false
@@ -14,7 +9,7 @@ class RolePlayResource < Madmin::Resource
   attribute :llm_instructions, :rich_text, index: false
   attribute :duration_minutes
   attribute :recommended_for, :rich_text, index: false
-  attribute :category, :select, collection: RolePlay.categories.keys.map { |k| [k.humanize, k] }
+  attribute :category, index: true
   attribute :active, index: true
   attribute :created_at, index: true, form: false
   attribute :updated_at, form: false

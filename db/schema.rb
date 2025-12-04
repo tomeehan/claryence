@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_02_000000) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_03_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -117,6 +117,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_02_000000) do
     t.bigint "user_id", null: false
     t.index ["token"], name: "index_api_tokens_on_token", unique: true
     t.index ["user_id"], name: "index_api_tokens_on_user_id"
+  end
+
+  create_table "categories", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_categories_on_name", unique: true
   end
 
   create_table "chat_messages", force: :cascade do |t|
@@ -364,13 +371,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_02_000000) do
 
   create_table "role_plays", force: :cascade do |t|
     t.boolean "active", default: true, null: false
-    t.integer "category", null: false
+    t.bigint "category_id", null: false
     t.datetime "created_at", null: false
     t.integer "duration_minutes", null: false
     t.string "name", null: false
     t.datetime "updated_at", null: false
     t.index ["active"], name: "index_role_plays_on_active"
-    t.index ["category"], name: "index_role_plays_on_category"
+    t.index ["category_id"], name: "index_role_plays_on_category_id"
     t.index ["name"], name: "index_role_plays_on_name", unique: true
   end
 
@@ -594,6 +601,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_02_000000) do
   add_foreign_key "role_play_sessions", "account_users"
   add_foreign_key "role_play_sessions", "accounts"
   add_foreign_key "role_play_sessions", "role_plays"
+  add_foreign_key "role_plays", "categories"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

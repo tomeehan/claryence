@@ -50,7 +50,7 @@ class ConversationReviewService
 
     role_play_context = <<~CTX
       Name: #{role_play.name}
-      Category: #{role_play.category}
+      Category: #{role_play.category&.name}
       Target Duration (minutes): #{role_play.duration_minutes}
       Description (snippet): #{description_snippet}
       Recommended For (snippet): #{recommended_snippet}
