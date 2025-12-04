@@ -1,40 +1,59 @@
 <% Current.meta_tags.set(title: "Start Chat Session") %>
 
-<div class="container mx-auto px-4 py-8 max-w-2xl">
-  <div class="mb-8">
-    <%= link_to "← Back to Role Plays", role_plays_path, class: "text-[#1a365d] hover:text-[#142849]" %>
-  </div>
+<% role_play = @role_play || RolePlay.find_by(id: params[:role_play_id]) %>
 
-  <% role_play = @role_play || RolePlay.find_by(id: params[:role_play_id]) %>
-  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
-    <h1 class="text-3xl font-bold text-gray-900 mb-4"><%= role_play&.name || "Start Chat Session" %></h1>
-
-    <% if role_play&.description.present? %>
-      <div class="prose prose-sm mb-6 text-gray-600">
-        <%= role_play.description %>
-      </div>
-    <% end %>
-
-    <div class="mb-8 p-4 bg-[#1a365d]/5 rounded-lg border border-[#1a365d]/10">
-      <h3 class="font-semibold text-gray-900 mb-2">What to expect:</h3>
-      <ul class="text-sm text-gray-700 space-y-1 list-disc ml-5">
-        <li>AI will role-play based on the scenario</li>
-        <li>Responses stream in real-time (like ChatGPT)</li>
-        <li>Duration: approximately <%= role_play&.duration_minutes || "—" %> minutes</li>
-        <li>Practice as many times as you'd like</li>
-      </ul>
+<div class="min-h-screen bg-gray-50 -mx-3 lg:mx-0">
+  <div class="mx-auto max-w-3xl px-4 py-12 sm:py-16">
+    <!-- Back link -->
+    <div class="mb-6">
+      <%= link_to "← Back to Role Plays", role_plays_path, class: "text-sm text-gray-600 hover:text-gray-800" %>
     </div>
 
+    <!-- Hero: typographic and calm -->
+    <header class="mb-6 sm:mb-8">
+      <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight text-gray-900">
+        <%= role_play&.name || "Start Chat Session" %>
+      </h1>
+      <p class="mt-2 text-base text-gray-600">
+        Focused practice • <%= role_play&.duration_minutes || "—" %> min
+      </p>
+    </header>
+
+    <% if role_play&.description.present? %>
+      <section class="mb-6">
+        <div class="prose prose-sm sm:prose-base max-w-none prose-p:leading-7 prose-p:text-gray-700 prose-headings:text-gray-900 prose-li:marker:text-gray-400">
+          <%= role_play.description %>
+        </div>
+      </section>
+    <% end %>
+
+    <!-- What to expect: light neutral module -->
+    <section class="mb-8 rounded-2xl bg-white p-5 sm:p-6 shadow-sm ring-1 ring-black/5">
+      <h2 class="text-base font-semibold text-gray-900 mb-2">What to expect</h2>
+      <ul class="text-sm text-gray-700 space-y-1 list-disc pl-5">
+        <li>AI role-plays the scenario with you</li>
+        <li>Responses stream in real time</li>
+        <li>Approx. <%= role_play&.duration_minutes || "—" %> minutes</li>
+        <li>Practice as many times as you’d like</li>
+      </ul>
+    </section>
+
+    <!-- Primary action -->
     <%= form_with url: role_play_role_play_sessions_path(role_play), method: :post, local: true do |f| %>
-      <div class="flex gap-4">
-        <button type="submit" data-controller="submit-loading" class="flex-1 px-6 py-3 bg-[#1a365d] text-white rounded-lg font-medium hover:bg-[#142849] transition-colors cursor-pointer btn btn-primary">
-          <span data-submit-loading-target="label" class="inline-flex items-center gap-2">Start Chat Session</span>
-          <span data-submit-loading-target="spinner" class="hidden items-center gap-2">
+      <div class="flex flex-col gap-3">
+        <button
+          type="submit"
+          data-controller="submit-loading"
+          class="w-full px-6 py-3 bg-[#1a365d] text-white rounded-lg sm:rounded-full font-medium hover:bg-[#142849] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a365d]/50 transition-colors cursor-pointer"
+        >
+          <span data-submit-loading-target="label" class="inline-flex items-center gap-2 justify-center w-full">Start Chat Session</span>
+          <span data-submit-loading-target="spinner" class="hidden items-center justify-center gap-2 w-full">
             <span class="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" aria-hidden="true"></span>
             <span class="text-white/95">Starting…</span>
           </span>
         </button>
-        <%= link_to "Cancel", role_plays_path, class: "px-6 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors" %>
+
+        <%= link_to "Cancel", role_plays_path, class: "text-sm font-medium text-gray-600 hover:text-gray-800 text-center" %>
       </div>
     <% end %>
   </div>

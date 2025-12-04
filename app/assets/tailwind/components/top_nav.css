@@ -1,7 +1,8 @@
 .top-nav {
-  background: var(--base-bg-low);
-  border-bottom: 1px solid var(--base-border-tertiary);
-  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+  /* Match app background tone; no chrome */
+  background: var(--base-bg-base);
+  border-bottom: none;
+  box-shadow: none;
   display: flex;
   justify-content: space-between;
   padding: 16px;
@@ -50,8 +51,8 @@
 }
 
 .nav-container {
-  background: var(--base-bg-low);
-  box-shadow: 0px 4px 6px -1px rgba(16, 24, 40, 0.10), 0px 2px 4px -2px rgba(16, 24, 40, 0.10);
+  background: var(--base-bg-base);
+  box-shadow: none;
   position: absolute;
   top: 100%;
   left: 0;
@@ -397,11 +398,10 @@ button[aria-label="Notifications"] svg {
 }
 
 .minimal-top-nav {
-  background: var(--base-bg-low);
+  background: var(--base-bg-base);
   padding: 16px;
-  border-bottom: 1px solid var(--base-border-tertiary);
-  background: var(--base-bg-low);
-  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+  border-bottom: none;
+  box-shadow: none;
 
   @media (min-width: 1024px) {
     padding: 0px 32px;

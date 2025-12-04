@@ -1,6 +1,7 @@
 <div id="flash" data-turbo-temporary>
   <%= banner message: alert, classes: "banner-warning", icon_name: :alert if alert %>
-  <%= banner message: notice, classes: "banner-info", icon_name: :notice if notice %>
+  <% hide_signed_in_notice = notice.present? && notice.to_s.strip == t('devise.sessions.signed_in', default: 'Signed in successfully.') %>
+  <%= banner message: notice, classes: "banner-info", icon_name: :notice if notice && !hide_signed_in_notice %>
 </div>
 
 <div id="toasts" data-turbo-temporary>
