@@ -1,6 +1,11 @@
 class RolePlayResource < Madmin::Resource
   # Scopes
   scope :active
+  scope :communication
+  scope :team_management
+  scope :conflict_resolution
+  scope :performance_management
+  scope :leadership_development
 
   # Attributes
   attribute :id, form: false

@@ -35,4 +35,11 @@ class RolePlay < ApplicationRecord
       all
     end
   end
+
+  # Convenience category scopes for admin filtering
+  scope :communication, -> { joins(:category).where(categories: { name: "Communication" }) }
+  scope :team_management, -> { joins(:category).where(categories: { name: "Team Management" }) }
+  scope :conflict_resolution, -> { joins(:category).where(categories: { name: "Conflict Resolution" }) }
+  scope :performance_management, -> { joins(:category).where(categories: { name: "Performance Management" }) }
+  scope :leadership_development, -> { joins(:category).where(categories: { name: "Leadership Development" }) }
 end
