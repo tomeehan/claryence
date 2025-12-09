@@ -10,5 +10,5 @@ class Account < ApplicationRecord
   has_many :role_play_sessions, dependent: :destroy
   has_many :chat_messages, dependent: :destroy
   has_many :coach_messages, dependent: :destroy
-  has_many :account_users, dependent: :destroy
+  # account_users association is defined in Account::Types with dependent: :destroy
 end
