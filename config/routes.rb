@@ -33,9 +33,7 @@ Rails.application.routes.draw do
   match "/500", via: :all, to: "errors#internal_server_error"
 
   authenticated :user do
-    root to: "dashboard#show", as: :user_root
-    # Alternate route to use if logged in users should still see public root
-    # get "/dashboard", to: "dashboard#show", as: :user_root
+    root to: "role_plays#index", as: :user_root
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
