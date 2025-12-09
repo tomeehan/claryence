@@ -16,6 +16,7 @@ class RolePlay < ApplicationRecord
   validates :description, presence: true
   validates :llm_instructions, presence: true
   validates :duration_minutes, presence: true, numericality: {greater_than: 0, only_integer: true}
+  validates :summary, presence: true, length: { maximum: 255 }
   validates :recommended_for, presence: true
   validates :category, presence: true
   validates :active, inclusion: {in: [true, false]}
