@@ -8,6 +8,7 @@ class AccountUser < ApplicationRecord
 
   belongs_to :account, counter_cache: true
   belongs_to :user
+  has_many :role_play_sessions, dependent: :destroy
 
   validates :user_id, uniqueness: {scope: :account_id}
   validate :owner_must_be_admin, on: :update, if: -> { admin_changed? && account_owner? }

@@ -9,6 +9,7 @@ class RolePlay < ApplicationRecord
 
   # Category relation
   belongs_to :category
+  has_many :role_play_sessions, dependent: :destroy
 
   # Validations
   validates :name, presence: true, uniqueness: true
