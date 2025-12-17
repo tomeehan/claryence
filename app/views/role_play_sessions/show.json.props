@@ -1,10 +1,14 @@
 json.session_id @session.id
 json.role_play_id @session.role_play_id
+json.role_play_name @session.role_play.name
 json.status @session.status
+json.phase @session.phase
+json.is_admin current_user.admin?
 
 json.messages @messages do |message|
   json.id message.id
   json.role message.role
   json.content message.content
+  json.phase message.phase
   json.created_at message.created_at
 end

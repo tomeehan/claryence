@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_04_142531) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_17_095235) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -130,11 +130,13 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_04_142531) do
     t.bigint "account_id", null: false
     t.text "content"
     t.datetime "created_at", null: false
+    t.string "phase", default: "role_play", null: false
     t.string "role"
     t.bigint "role_play_session_id", null: false
     t.integer "token_count"
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_chat_messages_on_account_id"
+    t.index ["phase"], name: "index_chat_messages_on_phase"
     t.index ["role_play_session_id"], name: "index_chat_messages_on_role_play_session_id"
   end
 
@@ -358,6 +360,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_04_142531) do
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.integer "duration_seconds"
+    t.string "phase", default: "setup", null: false
     t.bigint "role_play_id", null: false
     t.integer "session_number"
     t.datetime "started_at"
@@ -366,6 +369,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_04_142531) do
     t.datetime "updated_at", null: false
     t.index ["account_id"], name: "index_role_play_sessions_on_account_id"
     t.index ["account_user_id"], name: "index_role_play_sessions_on_account_user_id"
+    t.index ["phase"], name: "index_role_play_sessions_on_phase"
     t.index ["role_play_id"], name: "index_role_play_sessions_on_role_play_id"
   end
 

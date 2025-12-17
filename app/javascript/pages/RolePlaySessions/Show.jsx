@@ -2,6 +2,80 @@ import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { createConsumer } from "@rails/actioncable";
 
+// Heroicon: Bolt (for Clary avatar)
+function BoltIcon({ className }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path fillRule="evenodd" d="M14.615 1.595a.75.75 0 01.359.852L12.982 9.75h7.268a.75.75 0 01.548 1.262l-10.5 11.25a.75.75 0 01-1.272-.71l1.992-7.302H3.75a.75.75 0 01-.548-1.262l10.5-11.25a.75.75 0 01.913-.143z" clipRule="evenodd" />
+    </svg>
+  );
+}
+
+// Heroicon: User Circle (for Role Play avatar)
+function UserCircleIcon({ className }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path fillRule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clipRule="evenodd" />
+    </svg>
+  );
+}
+
+// Avatar component - renders appropriate icon based on phase
+function Avatar({ phase, role }) {
+  // Only show avatar for assistant messages
+  if (role === "user") return null;
+
+  const isClaryPhase = phase === "setup" || phase === "debrief";
+
+  if (isClaryPhase) {
+    return (
+      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center">
+        <BoltIcon className="w-5 h-5 text-white" />
+      </div>
+    );
+  }
+
+  // Role play phase
+  return (
+    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center">
+      <UserCircleIcon className="w-5 h-5 text-white" />
+    </div>
+  );
+}
+
+// Transition button rendered as a system message in the chat
+function TransitionButton({ type, onClick, disabled }) {
+  if (type === "start_role_play") {
+    return (
+      <div className="flex justify-center my-4">
+        <button
+          onClick={onClick}
+          disabled={disabled}
+          className="px-5 py-2.5 bg-[#6b116e] text-white text-sm font-medium rounded-full hover:bg-[#571056] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#6b116e]/50 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+        >
+          Start Role Play
+        </button>
+      </div>
+    );
+  }
+
+  if (type === "end_role_play") {
+    return (
+      <div className="flex justify-center my-4">
+        <button
+          onClick={onClick}
+          disabled={disabled}
+          className="px-5 py-2.5 bg-[#1a365d] text-white text-sm font-medium rounded-full hover:bg-[#142849] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a365d]/50 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+        >
+          End Role Play
+        </button>
+      </div>
+    );
+  }
+
+  return null;
+}
+
 function Markdown({ text }) {
   const renderInline = (content, keyPrefix = "") => {
     const nodes = [];
@@ -207,6 +281,8 @@ export default function Show() {
   const [pendingAssistantMessage, setPendingAssistantMessage] = useState(null);
   const [review, setReview] = useState("");
   const [wrappingUp, setWrappingUp] = useState(false);
+  // Phase management
+  const [phase, setPhase] = useState(data.phase || "setup");
   const messagesEndRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const channelRef = useRef(null);
@@ -218,7 +294,6 @@ export default function Show() {
   const assistantDoneRef = useRef(false);
   const pendingAssistantMessageRef = useRef(null);
   const streamingContentRef = useRef("");
-  const startedRef = useRef(false);
   const autoScrollRef = useRef(true);
   const [showJumpLatest, setShowJumpLatest] = useState(false);
   const LOCK_DISTANCE = 4; // px from bottom to (re)lock
@@ -233,6 +308,20 @@ export default function Show() {
     streamBufferRef.current = val;
     setStreamBuffer(val);
   };
+
+  // Sync messages from server data on initial load
+  useEffect(() => {
+    if (data.messages && data.messages.length > 0 && messages.length === 0) {
+      setMessages(data.messages);
+    }
+  }, [data.messages]);
+
+  // Sync phase from server data on initial load
+  useEffect(() => {
+    if (data.phase && data.phase !== phase) {
+      setPhase(data.phase);
+    }
+  }, [data.phase]);
 
   useEffect(() => {
     assistantDoneRef.current = assistantDone;
@@ -256,12 +345,8 @@ export default function Show() {
       },
       {
         connected() {
-          // Start conversation on connect if there are no messages yet
-          const hasMessages = (data.messages || []).length > 0;
-          if (!hasMessages && !startedRef.current) {
-            startedRef.current = true;
-            try { this.perform("start_conversation", {}); } catch (e) {}
-          }
+          // Setup phase intro is generated synchronously by the controller
+          // No need to start conversation here
         },
         disconnected() {},
         received(data) {
@@ -294,8 +379,10 @@ export default function Show() {
               break;
 
             case "assistant_complete":
-              if (skipStreamingDisplay) {
-                // Instantly show the full first message without typing effect
+              // Check if we're actively streaming (use ref to avoid stale closure)
+              const activelyStreaming = streamBufferRef.current.length > 0 || streamingContentRef.current.length > 0;
+              if (skipStreamingDisplay || !activelyStreaming) {
+                // Instantly show message if not streaming (e.g., phase transition intros)
                 setIsStreaming(false);
                 setMessages((prev) => [...prev, data.message]);
                 setStreamingContent("");
@@ -308,6 +395,15 @@ export default function Show() {
                 setAssistantDone(true);
                 setPendingAssistantMessage(data.message);
               }
+              // Check for wrapping_up flag from role play LLM
+              if (data.wrapping_up !== undefined && data.wrapping_up !== null) {
+                setWrappingUp(data.wrapping_up);
+              }
+              break;
+
+            case "phase_changed":
+              setPhase(data.phase);
+              setWrappingUp(false);
               break;
 
             case "error":
@@ -341,13 +437,6 @@ export default function Show() {
     );
 
     channelRef.current = channel;
-
-    // Fallback: also attempt immediately after subscription
-    const hasMessages = (data.messages || []).length > 0;
-    if (!hasMessages && !startedRef.current) {
-      startedRef.current = true;
-      try { channel.perform("start_conversation", {}); } catch (e) {}
-    }
 
     return () => {
       channel.unsubscribe();
@@ -522,20 +611,43 @@ export default function Show() {
     }
   };
 
+  // Phase transition handlers
+  const handleStartRolePlay = () => {
+    if (channelRef.current) {
+      channelRef.current.perform("transition_phase", { phase: "role_play" });
+    }
+  };
+
+  const handleEndRolePlay = () => {
+    if (channelRef.current) {
+      channelRef.current.perform("transition_phase", { phase: "debrief" });
+    }
+  };
+
+  // Determine styling based on current phase
+  const isClaryPhase = phase === "setup" || phase === "debrief";
+  const bgColor = isClaryPhase ? "bg-purple-50" : "bg-gray-50";
+  const headerTitle = phase === "role_play" ? (data.role_play_name || "Role Play") : "Clary";
+  const userBubbleColor = (msgPhase) => {
+    return msgPhase === "role_play" ? "bg-[#1a365d]" : "bg-[#6b116e]";
+  };
+  const buttonColor = isClaryPhase
+    ? "bg-[#6b116e] hover:bg-[#571056] focus-visible:ring-[#6b116e]/50"
+    : "bg-[#1a365d] hover:bg-[#142849] focus-visible:ring-[#1a365d]/50";
+  const inputRingColor = isClaryPhase ? "focus:ring-[#6b116e]" : "focus:ring-[#1a365d]";
+
   return (
-    <div className="fixed inset-0 flex flex-col bg-gray-50 overflow-hidden">
+    <div className={`fixed inset-0 flex flex-col ${bgColor} overflow-hidden transition-colors duration-300`}>
       {/* Header */}
       <div className="shrink-0 bg-white border-b border-gray-200 px-4 py-3 md:px-6 md:py-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl md:text-2xl font-semibold text-gray-900">Clary</h1>
+          <div className="flex items-center gap-3">
+            <Avatar phase={phase} role="assistant" />
+            <h1 className="text-xl md:text-2xl font-semibold text-gray-900">{headerTitle}</h1>
+          </div>
           <a
-            href={`/chat/coach/${data.session_id}`}
-            className={
-              `px-3 py-1.5 md:px-4 md:py-2 text-sm font-medium rounded-lg sm:rounded-full transition-colors focus:outline-none focus-visible:ring-2 ` +
-              (wrappingUp
-                ? "bg-[#1a365d] text-white hover:bg-[#142849] focus-visible:ring-[#1a365d]/50"
-                : "text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus-visible:ring-gray-300/60")
-            }
+            href="/"
+            className="px-3 py-1.5 md:px-4 md:py-2 text-sm font-medium rounded-lg sm:rounded-full transition-colors focus:outline-none focus-visible:ring-2 text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 focus-visible:ring-gray-300/60"
           >
             Exit
           </a>
@@ -579,12 +691,16 @@ export default function Show() {
               {messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+                  className={`flex ${message.role === "user" ? "justify-end" : "justify-start"} items-start gap-2`}
                 >
+                  {/* Avatar for assistant messages */}
+                  {message.role === "assistant" && (
+                    <Avatar phase={message.phase || "setup"} role={message.role} />
+                  )}
                   <div
                     className={`max-w-[85%] md:max-w-2xl rounded-2xl px-4 py-2 md:py-3 ${
                       message.role === "user"
-                        ? "bg-[#1a365d] text-white"
+                        ? `${userBubbleColor(message.phase || phase)} text-white`
                         : "bg-white text-gray-900 border border-gray-200"
                     }`}
                   >
@@ -593,9 +709,20 @@ export default function Show() {
                 </div>
               ))}
 
+              {/* Show Start Role Play button when in setup phase */}
+              {phase === "setup" && !isStreaming && messages.length > 0 && (
+                <TransitionButton type="start_role_play" onClick={handleStartRolePlay} />
+              )}
+
+              {/* Show End Role Play button when wrapping_up is true */}
+              {phase === "role_play" && wrappingUp && !isStreaming && (
+                <TransitionButton type="end_role_play" onClick={handleEndRolePlay} />
+              )}
+
               {/* Streaming message */}
               {isStreaming && streamingContent && !skipStreamingDisplay && (
-                <div className="flex justify-start">
+                <div className="flex justify-start items-start gap-2">
+                  <Avatar phase={phase} role="assistant" />
                   <div className="max-w-[85%] md:max-w-2xl rounded-2xl px-4 py-2 md:py-3 bg-white text-gray-900 border border-gray-200">
                     <div className="whitespace-pre-wrap break-words text-[15px] md:text-base leading-6">
                       {streamingContent}
@@ -637,12 +764,12 @@ export default function Show() {
                   onKeyDown={handleKeyDown}
                   disabled={isStreaming}
                   placeholder="Type your message..."
-                  className="flex-1 px-3 py-2 md:px-4 md:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1a365d] disabled:bg-gray-100 disabled:cursor-not-allowed resize-none overflow-y-auto max-h-32 leading-6 text-base"
+                  className={`flex-1 px-3 py-2 md:px-4 md:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 ${inputRingColor} disabled:bg-gray-100 disabled:cursor-not-allowed resize-none overflow-y-auto max-h-32 leading-6 text-base`}
                 />
                 <button
                   type="submit"
                   disabled={!input.trim() || isStreaming}
-                  className="px-5 py-2.5 md:px-6 md:py-3 bg-[#1a365d] text-white rounded-lg sm:rounded-full font-medium hover:bg-[#142849] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a365d]/50 disabled:bg-gray-300 disabled:text-white/70 disabled:cursor-not-allowed transition-colors"
+                  className={`px-5 py-2.5 md:px-6 md:py-3 ${buttonColor} text-white rounded-lg sm:rounded-full font-medium focus:outline-none focus-visible:ring-2 disabled:bg-gray-300 disabled:text-white/70 disabled:cursor-not-allowed transition-colors`}
                 >
                   {isStreaming ? "..." : "Send"}
                 </button>
