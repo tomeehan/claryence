@@ -20,16 +20,15 @@
               <%= role_play.summary.presence || role_play.description.to_plain_text.truncate(100) %>
             </p>
 
-            <% if current_user&.admin? %>
-              <div class="mt-2">
-                <%= link_to "Previous chats", role_play_role_play_sessions_path(role_play), class: "hidden text-xs font-medium text-gray-500 hover:text-gray-700" %>
-              </div>
-            <% end %>
-
             <div class="mt-5 flex items-center justify-between">
-              <span class="text-xs text-gray-500">
-                <%= role_play.duration_minutes %> min
-              </span>
+              <div class="flex items-center gap-3">
+                <span class="text-xs text-gray-500">
+                  <%= role_play.duration_minutes %> min
+                </span>
+                <% if current_user&.admin? %>
+                  <%= link_to "Previous chats", role_play_role_play_sessions_path(role_play), class: "text-xs text-gray-400 hover:text-gray-600" %>
+                <% end %>
+              </div>
 
               <%= link_to "Start chat", new_role_play_role_play_session_path(role_play), class: "inline-flex items-center rounded-lg sm:rounded-full bg-[#1a365d] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#142849] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a365d]/50 transition-colors" %>
             </div>
