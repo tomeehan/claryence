@@ -11,12 +11,13 @@ class RolePlaySession < AccountRecord
 
   before_create :set_started_at
   before_create :set_session_number
+  before_create :set_model_from_role_play
 
   scope :active, -> { where(status: "active") }
   scope :completed, -> { where(status: "completed") }
 
   def openai_model
-    "gpt-4o"
+    model || role_play&.model || "gpt-4o"
   end
 
   # Phase helper methods
@@ -165,5 +166,9 @@ class RolePlaySession < AccountRecord
       account_user: account_user,
       role_play: role_play
     ).count + 1
+  end
+
+  def set_model_from_role_play
+    self.model ||= role_play&.model || "gpt-4o"
   end
 end

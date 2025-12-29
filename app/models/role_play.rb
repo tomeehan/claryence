@@ -1,4 +1,6 @@
 class RolePlay < ApplicationRecord
+  OPENAI_MODELS = %w[gpt-4o gpt-4-turbo gpt-4 gpt-3.5-turbo].freeze
+
   # PaperTrail versioning for audit logging
   has_paper_trail
 
@@ -20,6 +22,7 @@ class RolePlay < ApplicationRecord
   validates :recommended_for, presence: true
   validates :category, presence: true
   validates :active, inclusion: {in: [true, false]}
+  validates :model, presence: true, inclusion: {in: OPENAI_MODELS}
 
   # Default scope: order by created_at (oldest first)
   default_scope -> { order(created_at: :asc) }

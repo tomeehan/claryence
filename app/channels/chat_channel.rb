@@ -180,7 +180,7 @@ class ChatChannel < ApplicationCable::Channel
     begin
       openai.chat_completion_stream(
         messages,
-        model: "gpt-4o",
+        model: session.openai_model,
         temperature: temperature_for_phase(session.phase),
         top_p: 0.9,
         presence_penalty: 0.2,
@@ -231,7 +231,7 @@ class ChatChannel < ApplicationCable::Channel
     begin
       openai.chat_completion_stream(
         messages,
-        model: "gpt-4o",
+        model: session.openai_model,
         temperature: temperature_for_phase(phase),
         max_tokens: max_tokens
       ) do |chunk|

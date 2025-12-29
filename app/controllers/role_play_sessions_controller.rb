@@ -123,7 +123,7 @@ class RolePlaySessionsController < ApplicationController
     openai = OpenaiService.new
     response = openai.chat_completion(
       messages,
-      model: "gpt-4o",
+      model: session.openai_model,
       temperature: 0.8,
       max_tokens: 400
     )
@@ -158,7 +158,7 @@ class RolePlaySessionsController < ApplicationController
     openai = OpenaiService.new
     response = openai.chat_completion(
       messages,
-      model: "gpt-4o",
+      model: session.openai_model,
       temperature: 0.9,
       top_p: 0.9,
       presence_penalty: 0.2,

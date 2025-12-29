@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_12_17_095235) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_29_153410) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_stat_statements"
@@ -360,6 +360,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_17_095235) do
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.integer "duration_seconds"
+    t.string "model"
     t.string "phase", default: "setup", null: false
     t.bigint "role_play_id", null: false
     t.integer "session_number"
@@ -378,6 +379,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_12_17_095235) do
     t.bigint "category_id", null: false
     t.datetime "created_at", null: false
     t.integer "duration_minutes", null: false
+    t.string "model", default: "gpt-4o", null: false
     t.string "name", null: false
     t.string "summary"
     t.datetime "updated_at", null: false

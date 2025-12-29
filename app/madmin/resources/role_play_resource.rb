@@ -15,6 +15,7 @@ class RolePlayResource < Madmin::Resource
   attribute :duration_minutes
   attribute :recommended_for, :rich_text, index: false
   attribute :category, index: true
+  attribute :model, :select, index: true, collection: RolePlay::OPENAI_MODELS
   attribute :active, index: true
   attribute :created_at, index: true, form: false
   attribute :updated_at, form: false
