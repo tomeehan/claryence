@@ -15,6 +15,10 @@ class RolePlaySession < AccountRecord
   scope :active, -> { where(status: "active") }
   scope :completed, -> { where(status: "completed") }
 
+  def openai_model
+    "gpt-4o"
+  end
+
   # Phase helper methods
   def setup?
     phase == "setup"
