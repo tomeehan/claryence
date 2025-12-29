@@ -187,6 +187,7 @@ class ChatChannel < ApplicationCable::Channel
         frequency_penalty: 0.2
       ) do |chunk|
         ai_content += chunk
+        sleep(ENV["STREAM_LATENCY_MS"].to_f / 1000) if ENV["STREAM_LATENCY_MS"].present?
         ChatChannel.broadcast_to(session, {type: "assistant_chunk", content: chunk})
       end
 
@@ -236,6 +237,7 @@ class ChatChannel < ApplicationCable::Channel
         max_tokens: max_tokens
       ) do |chunk|
         ai_content += chunk
+        sleep(ENV["STREAM_LATENCY_MS"].to_f / 1000) if ENV["STREAM_LATENCY_MS"].present?
         ChatChannel.broadcast_to(session, {type: "assistant_chunk", content: chunk})
       end
 

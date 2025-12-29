@@ -142,7 +142,7 @@ function Markdown({ text }) {
       if (para.length) {
         const text = para.join(" ");
         elements.push(
-          <p key={`p-${key++}`} className="text-gray-800">
+          <p key={`p-${key++}`} className="">
             {renderInline(text, `p${key}-`)}
           </p>,
         );
@@ -158,7 +158,7 @@ function Markdown({ text }) {
         ));
         if (listType === "ul") {
           elements.push(
-            <ul key={`ul-${key++}`} className="space-y-1 text-gray-800">
+            <ul key={`ul-${key++}`} className="space-y-1">
               {items}
             </ul>,
           );
@@ -169,7 +169,7 @@ function Markdown({ text }) {
             </li>
           ));
           elements.push(
-            <ol key={`ol-${key++}`} className="space-y-1 text-gray-800">
+            <ol key={`ol-${key++}`} className="space-y-1">
               {olItems}
             </ol>,
           );
@@ -704,7 +704,7 @@ export default function Show() {
                         : "bg-white text-gray-900 border border-gray-200"
                     }`}
                   >
-                    <div className="whitespace-pre-wrap break-words text-[15px] md:text-base leading-6">{message.content}</div>
+                    <div className="text-[15px] md:text-base leading-6"><Markdown text={message.content} /></div>
                   </div>
                 </div>
               ))}
@@ -725,10 +725,7 @@ export default function Show() {
                   <Avatar phase={phase} role="assistant" />
                   <div className="max-w-[85%] md:max-w-2xl rounded-2xl px-4 py-2 md:py-3 bg-white text-gray-900 border border-gray-200">
                     <div className="whitespace-pre-wrap break-words text-[15px] md:text-base leading-6">
-                      {streamingContent}
-                    </div>
-                    <div className="mt-2 flex items-center text-gray-400 text-xs">
-                      <div className="animate-pulse">●</div>
+                      {streamingContent}<span className="inline-block ml-1 text-gray-400 animate-pulse">●</span>
                     </div>
                   </div>
                 </div>
