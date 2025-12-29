@@ -21,16 +21,17 @@ function UserCircleIcon({ className }) {
 }
 
 // Avatar component - renders appropriate icon based on phase
-function Avatar({ phase, role }) {
+function Avatar({ phase, role, isStreaming }) {
   // Only show avatar for assistant messages
   if (role === "user") return null;
 
   const isClaryPhase = phase === "setup" || phase === "debrief";
 
+  // Clary phases use the orb (animated when streaming, still when not)
   if (isClaryPhase) {
     return (
-      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center">
-        <BoltIcon className="w-5 h-5 text-white" />
+      <div className="flex-shrink-0 w-8 h-8">
+        <ClaryOrb size={32} animated={isStreaming} />
       </div>
     );
   }
@@ -74,6 +75,72 @@ function TransitionButton({ type, onClick, disabled }) {
   }
 
   return null;
+}
+
+// Clary Orb - gradient orb with orbiting particles when animated
+function ClaryOrb({ size = 32, animated = false }) {
+  const containerStyles = {
+    position: 'relative',
+    width: `${size}px`,
+    height: `${size}px`,
+    display: 'inline-block',
+  };
+
+  const orbStyles = {
+    position: 'absolute',
+    inset: '15%',
+    borderRadius: '50%',
+    background: 'linear-gradient(135deg, #00A0E9, #24C1C6, #FF8A34)',
+    zIndex: 2,
+  };
+
+  const orbitStyles = {
+    position: 'absolute',
+    inset: 0,
+    borderRadius: '50%',
+  };
+
+  const particleStyles = {
+    position: 'absolute',
+    width: '6px',
+    height: '6px',
+    borderRadius: '50%',
+    top: '0',
+    left: '50%',
+    marginLeft: '-3px',
+    marginTop: '-3px',
+  };
+
+  return (
+    <>
+      <style>{`
+        @keyframes claryOrbit {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes claryParticlePulse {
+          0%, 100% { opacity: 0.4; transform: scale(0.8); }
+          50% { opacity: 1; transform: scale(1); }
+        }
+      `}</style>
+      <span style={containerStyles} aria-label={animated ? "Clary is thinking" : "Clary"}>
+        <span style={orbStyles} />
+        {animated && (
+          <>
+            <span style={{ ...orbitStyles, animation: 'claryOrbit 2s linear infinite' }}>
+              <span style={{ ...particleStyles, background: '#00A0E9', animation: 'claryParticlePulse 1s ease-in-out infinite' }} />
+            </span>
+            <span style={{ ...orbitStyles, animation: 'claryOrbit 2s linear infinite 0.67s' }}>
+              <span style={{ ...particleStyles, background: '#24C1C6', animation: 'claryParticlePulse 1s ease-in-out infinite 0.33s' }} />
+            </span>
+            <span style={{ ...orbitStyles, animation: 'claryOrbit 2s linear infinite 1.33s' }}>
+              <span style={{ ...particleStyles, background: '#FF8A34', animation: 'claryParticlePulse 1s ease-in-out infinite 0.67s' }} />
+            </span>
+          </>
+        )}
+      </span>
+    </>
+  );
 }
 
 function Markdown({ text }) {
@@ -722,10 +789,10 @@ export default function Show() {
               {/* Streaming message */}
               {isStreaming && streamingContent && !skipStreamingDisplay && (
                 <div className="flex justify-start items-start gap-2">
-                  <Avatar phase={phase} role="assistant" />
+                  <Avatar phase={phase} role="assistant" isStreaming={true} />
                   <div className="max-w-[85%] md:max-w-2xl rounded-2xl px-4 py-2 md:py-3 bg-white text-gray-900 border border-gray-200">
                     <div className="whitespace-pre-wrap break-words text-[15px] md:text-base leading-6">
-                      {streamingContent}<span className="inline-block ml-1 text-gray-400 animate-pulse">●</span>
+                      {streamingContent}
                     </div>
                   </div>
                 </div>
