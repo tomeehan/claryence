@@ -64,7 +64,8 @@ class RolePlaySession < AccountRecord
 
   # Build the setup phase prompt with scenario details
   def build_setup_prompt
-    base = SystemPrompt.fetch("setup_intro_system_prompt")
+    clary_soul = SystemPrompt.fetch("clary_soul")
+    setup_instructions = SystemPrompt.fetch("setup_intro_system_prompt")
 
     rp = role_play
     description_text = rp.description&.to_plain_text.to_s.strip
@@ -75,7 +76,9 @@ class RolePlaySession < AccountRecord
     character_summary = extract_character_summary(instructions_text)
 
     <<~FULL_PROMPT
-      #{base}
+      #{clary_soul}
+
+      #{setup_instructions}
 
       SCENARIO DETAILS:
       Name: #{rp.name}
